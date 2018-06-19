@@ -1,0 +1,11 @@
+six
+pymongo
+cement
+mutagen
+terminaltables
+cryptography
+mongoengine
+requests
+colorama
+beautifulsoup4
+blinker
