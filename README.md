@@ -24,7 +24,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 3. [mongodb](https://docs.mongodb.com/manual/installation/)
 
 ### Git clone安装
-    $ git clone https://github.com/Grass-CLP/NXSpider.git && cd musicbox
+    $ git clone https://github.com/Grass-CLP/NXSpider.git && cd NXSpider
     $ python(3) setup.py install
 
 ### pip安装
