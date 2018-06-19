@@ -81,27 +81,27 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 ![img](img/search_ab.png)
 
-### 显示歌手唱片
+#### 显示歌手唱片
 	$nxspider sw-ar-ab -ar <artist_id> [-offset <offset>] [-limit <limit>]
 
-### 根据唱片id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置)
+#### 根据唱片id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置)
 	$nxspider spls -pl <playlist_id,id2,id3> [-dw <mv,mp3>]
 	$nxspider spls -pl 144236857 -dw mv,mp3
 
 ![img](img/spider_spls.png)
 
-### 根据歌手id爬取该歌手top50首，
+#### 根据歌手id爬取该歌手top50首，
     $nxspider sab -ab <album_id,id1,id2> [-dw <mv,mp3>]
     $nxspider sab -ab 3084625 -dw mv,mp3
 
 ![img](img/sar-top-mp3.png)
 
-### 小tips
+#### 小tips
 - 配置 ```-tag163 1``` 直接把下载目录添加到PC版某云软件的下载目录下，软件会自动识别已下载
 - 关闭爬取，目前代码是幂等运行，暂时建议直接 ```ctrl + c``` 强制关闭即可
 
 
-### 已测试的系统兼容列表
+#### 已测试的系统兼容列表
 <table>
 	<tr> <td>win7(GBK) + python2</td> <td>字符集问题</td> </tr>
 	<tr> <td>win7(GBK) + python3</td> <td>通过</td> </tr>
@@ -109,7 +109,7 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 	<tr> <td>centos7.2(utf8) + python3</td> <td>通过</td> </tr>
 </table>
 
-### 效果图示例
+#### 效果图示例
 - 已下载mv
 
 ![img](img/mv_download.png)
