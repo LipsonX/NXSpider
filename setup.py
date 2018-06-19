@@ -45,6 +45,7 @@ setup(
         "beautifulsoup4",
         "blinker",
         "cement",
+        "six",
     ],
     entry_points={
         "console_scripts": ["nxspider=NXSpider.bin.cli:main"]
