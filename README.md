@@ -24,7 +24,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 3. [mongodb](https://docs.mongodb.com/manual/installation/)
 
 ### Git clone安装
-    $ git clone https://github.com/darknessomi/musicbox.git && cd musicbox
+    $ git clone https://github.com/Grass-CLP/NXSpider.git && cd musicbox
     $ python(3) setup.py install
 
 ### pip安装
@@ -49,7 +49,7 @@ PYTHONPATH=. python(3) NXSipder/bin/cli.py ...
 ```
 4. 注意,win下采用bash_python时，分割符 ```,``` 必须改为 ```:``` eg.
 ```
-$path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
+$bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 ```
 
 
@@ -124,10 +124,15 @@ $path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 ## 开发及问题
 
+### 注意
+- 本项目纯粹是学习开发使用，欢迎大家互相讨论，下载的资料请24小时内删除
+- 涉及侵权以及版权问题欢迎讨论和提出
+
 ### 协助开发或2次开发建议
 1. 希望尽可能(yahoo邮件)跟作者(LipsonChan)联系，以及对项目进行加❤
 2. 核心代码为NXSpider/bin以及NXSpider/spider/base_driver.py
 3. 主要逻辑为通过api获得对于json数据，采用递归+配置方式，自动下载可下载对象
+4. 如果有任何反馈，希望回复到项目的issue,注明版本号，运行环境及描述清楚问题
 
 ### windows + python2问题
 1. 参数输入(目前只有查询)非中文和latin，可能会出现问题
@@ -136,7 +141,7 @@ $path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 
 ### 其他问题
-1. 同歌手同名MP3不会被重复下载
+- 同歌手同名MP3不会被重复下载
 
 ### 开发历程
 - 基于spider163项目(不满足且有小bug)，开发mongodb以及可以更多爬取项目

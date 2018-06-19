@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 
-NXSpider/debug_test/
+NXSpider/debug_test/*.js
+NXSpider/debug_test/*.json
 NXSpider/tmp/
 download_files/
 
