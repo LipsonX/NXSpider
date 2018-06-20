@@ -9,10 +9,9 @@ import re
 from functools import reduce
 
 from NXSpider.common.config import Config
-from NXSpider.model.mongo_model import Mp4Model
 from NXSpider.spider.api import get_mv_link
 from NXSpider.spider.artist import Artist
-from NXSpider.spider.base_driver import Music163Obj
+from NXSpider.spider.base_driver import *
 
 
 def get_target_r(obj, limit_r=Config().get_mv_resolution()):

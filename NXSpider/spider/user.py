@@ -4,8 +4,7 @@
 # created by Lipson on 2018/4/25.
 # email to LipsonChan@yahoo.com
 #
-from NXSpider.model.mongo_model import UserModel
-from NXSpider.spider.base_driver import Music163Obj
+from NXSpider.spider.base_driver import *
 
 
 class User(Music163Obj):

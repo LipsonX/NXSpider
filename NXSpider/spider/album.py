@@ -5,9 +5,8 @@
 # email to LipsonChan@yahoo.com
 #
 
-from NXSpider.model.mongo_model import AlbumModel
 from NXSpider.spider.artist import Artist
-from NXSpider.spider.base_driver import Music163Obj, attr_replace
+from NXSpider.spider.base_driver import *
 
 
 class Album(Music163Obj):

@@ -13,10 +13,11 @@ import requests
 import six
 from mongoengine import DynamicDocument
 
-from NXSpider.common import tools, log
 from NXSpider.common.config import Config
-from NXSpider.model.mongo_model import *
+from NXSpider.common import tools, log
 from NXSpider.utility.media_tag import attach_media_tag
+from NXSpider.model.export import *
+import NXSpider.model.export
 
 
 class Music163ObjException(Exception):
@@ -275,7 +276,6 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
                 log.print_info(u"file is exist or is not need to download : %s"
                                % name)
 
-
     def parse_model(self, crawl_dict, download_type=None,
                     file_check=False, save=True, debug=False):
         """
@@ -366,4 +366,17 @@ __all__ = [
     'Music163Obj',
     'attr_replace',
     'Music163ObjException',
+
+    'ConfigModel',
+    'UserModel',
+    'AlbumModel',
+    'PlaylistModel',
+    'Mp4Model',
+    'ArtistModel',
+    'Mp3Model',
+    'AuthorModel',
+    'update_dynamic_doc',
+    'model_download_url',
+    'model_is_download',
+    'get_one_model_by_key',
 ]

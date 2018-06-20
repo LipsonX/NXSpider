@@ -5,9 +5,8 @@
 # email to LipsonChan@yahoo.com
 #
 
-from NXSpider.model.mongo_model import PlaylistModel
 from NXSpider.spider.mp3 import Mp3
-from NXSpider.spider.base_driver import Music163Obj, attr_replace
+from NXSpider.spider.base_driver import *
 from NXSpider.spider.user import User
 
 

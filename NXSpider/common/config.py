@@ -44,6 +44,7 @@ class Config(Singleton):
             'media_tag_163': True,
             'download_file_check': True,
             'debug_log': True,
+            'has_mongo': False,
         }
         self.config = {}
 
@@ -105,6 +106,9 @@ class Config(Singleton):
 
     def get_file_check(self):
         return self.config['download_file_check']
+
+    def get_has_mongo(self):
+        return self.config['has_mongo']
 
     def save_config_dict(self, obj):
         """
