@@ -24,7 +24,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 3. [mongodb](https://docs.mongodb.com/manual/installation/)
 
 ### Git clone安装
-    $ git clone https://github.com/darknessomi/musicbox.git && cd musicbox
+    $ git clone https://github.com/Grass-CLP/NXSpider.git && cd NXSpider
     $ python(3) setup.py install
 
 ### pip安装
@@ -49,7 +49,7 @@ PYTHONPATH=. python(3) NXSipder/bin/cli.py ...
 ```
 4. 注意,win下采用bash_python时，分割符 ```,``` 必须改为 ```:``` eg.
 ```
-$path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
+$bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 ```
 
 
@@ -81,27 +81,27 @@ $path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 ![img](img/search_ab.png)
 
-### 显示歌手唱片
+#### 显示歌手唱片
 	$nxspider sw-ar-ab -ar <artist_id> [-offset <offset>] [-limit <limit>]
 
-### 根据唱片id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置)
+#### 根据唱片id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置)
 	$nxspider spls -pl <playlist_id,id2,id3> [-dw <mv,mp3>]
 	$nxspider spls -pl 144236857 -dw mv,mp3
 
 ![img](img/spider_spls.png)
 
-### 根据歌手id爬取该歌手top50首，
+#### 根据歌手id爬取该歌手top50首，
     $nxspider sab -ab <album_id,id1,id2> [-dw <mv,mp3>]
     $nxspider sab -ab 3084625 -dw mv,mp3
 
 ![img](img/sar-top-mp3.png)
 
-### 小tips
+#### 小tips
 - 配置 ```-tag163 1``` 直接把下载目录添加到PC版某云软件的下载目录下，软件会自动识别已下载
 - 关闭爬取，目前代码是幂等运行，暂时建议直接 ```ctrl + c``` 强制关闭即可
 
 
-### 已测试的系统兼容列表
+#### 已测试的系统兼容列表
 <table>
 	<tr> <td>win7(GBK) + python2</td> <td>字符集问题</td> </tr>
 	<tr> <td>win7(GBK) + python3</td> <td>通过</td> </tr>
@@ -109,7 +109,7 @@ $path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 	<tr> <td>centos7.2(utf8) + python3</td> <td>通过</td> </tr>
 </table>
 
-### 效果图示例
+#### 效果图示例
 - 已下载mv
 
 ![img](img/mv_download.png)
@@ -124,10 +124,15 @@ $path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 ## 开发及问题
 
+### 注意
+- 本项目纯粹是学习开发使用，欢迎大家互相讨论，下载的资料请24小时内删除
+- 涉及侵权以及版权问题欢迎讨论和提出
+
 ### 协助开发或2次开发建议
 1. 希望尽可能(yahoo邮件)跟作者(LipsonChan)联系，以及对项目进行加❤
 2. 核心代码为NXSpider/bin以及NXSpider/spider/base_driver.py
 3. 主要逻辑为通过api获得对于json数据，采用递归+配置方式，自动下载可下载对象
+4. 如果有任何反馈，希望回复到项目的issue,注明版本号，运行环境及描述清楚问题
 
 ### windows + python2问题
 1. 参数输入(目前只有查询)非中文和latin，可能会出现问题
@@ -136,7 +141,7 @@ $path_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 
 ### 其他问题
-1. 同歌手同名MP3不会被重复下载
+- 同歌手同名MP3不会被重复下载
 
 ### 开发历程
 - 基于spider163项目(不满足且有小bug)，开发mongodb以及可以更多爬取项目
