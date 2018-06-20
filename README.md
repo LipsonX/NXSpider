@@ -10,6 +10,8 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)]()
 [![platform](https://img.shields.io/badge/python-3.5-green.svg)]()
 
+[非IT人员请看这里](SIMPLE_USE.md)
+
 ## 功能特性
 1. 采用命令行形式运行，配置在个人账号目录下```~/.nxspider/```
 2. 搜索歌单，歌手，专辑，用户等信息
@@ -57,19 +59,24 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 #### 简单示例
 	$nxspider -h
 	$nxspider -v
+	$nxspider config-check
 
 #### 配置, <>内容为值，or为可选
 	$nxspider config-mongo -mh <host> -mp <port> -mn <db name>
+	$nxspider config-mongo -nomongo <1 or 0>
 	$nxspider config-spider -path <you_download_path,default> 
 	$nxspider config-spider -mvr <240 or 480 or 720 or 1080>
 	$nxspider config-spider -tag <1 or 0>
 	$nxspider config-spider -tag163 <1 or 0>
+	$nxspider config-check
 
 #### 配置说明
 1. **config-mongo必须运行爬取前配置!!!**，dbname可不指定，默认为nxspider
 2. path 强烈建议爬取前配置，```,``` 为多个下载路径分隔符。default指```~/.nxspider/download_files/```
 3. 其他配置可选，请查看 ```nxspider -h```
 4. ```-tag 1``` 建议保留 ```-tag163 1``` 根据需求保留
+5. 默认无mongodb模式，即 ```nxspider config-mongo -nomongo 1``` ，需要采集数据则通过配置第一条即可
+6. 配置完建议执行 ```nxspider config-check``` 检查配置正确性
 
 #### 搜索
 	$nxspider search -ar <artist> [-offset <offset>] [-limit <limit>]
@@ -101,12 +108,15 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 - 关闭爬取，目前代码是幂等运行，暂时建议直接 ```ctrl + c``` 强制关闭即可
 
 
-#### 已测试的系统兼容列表
+#### 系统兼容
 <table>
 	<tr> <td>win7(GBK) + python2</td> <td>字符集问题</td> </tr>
 	<tr> <td>win7(GBK) + python3</td> <td>通过</td> </tr>
+	<tr> <td>win10(GBK) + python2</td> <td>字符集问题</td> </tr>
+	<tr> <td>win10(GBK) + python3</td> <td>通过</td> </tr>
 	<tr> <td>centos7.2(utf8) + python2</td> <td>通过</td> </tr>
 	<tr> <td>centos7.2(utf8) + python3</td> <td>通过</td> </tr>
+	<tr> <td>mac + python</td> <td>待补充</td> </tr>
 </table>
 
 #### 效果图示例
@@ -150,6 +160,9 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 - 为了配合Netease app和桌面软件，修改mp3 mp4 tag信息
 - 艰难的使用了eyed3，windows超级麻烦(现成的dll还要配置，还有字符集问题)，发现不支持mp4，非常难过
 - 发现mutagen，果断弃坑eyed3
+- 发布0.0.1版本，可以通过playlist，ablum，aritst_top_mp3爬取和下载mp3,mv
+- 发现mongodb可能有人不喜欢，新增无数据库版本（默认无需使用），通过配置可切换
+- 新增通过获取最火playlist进行爬取
 
 ### 下阶段开发
 - 通过用户id，爬取该用户所有的歌单

@@ -6,10 +6,11 @@
 #
 
 from NXSpider.common.config import Config
-if Config().get_has_mongo():
-    from NXSpider.model.mongo_model import *
-else:
+if Config().get_no_mongo():
     from NXSpider.model.dict_model import *
+else:
+    from NXSpider.model.mongo_model import *
+
 
 model_download_url = 'download_url'
 model_is_download = 'downloaded'
