@@ -44,6 +44,7 @@ class Config(Singleton):
             'media_tag_163': True,
             'download_file_check': True,
             'debug_log': True,
+            'no_mongo': True,
         }
         self.config = {}
 
@@ -106,6 +107,9 @@ class Config(Singleton):
     def get_file_check(self):
         return self.config['download_file_check']
 
+    def get_no_mongo(self):
+        return self.config['no_mongo']
+
     def save_config_dict(self, obj):
         """
         :type obj: dict
@@ -123,19 +127,21 @@ class Config(Singleton):
         try:
 
             # check mongodb config
-            mongo = self.config['mongo']
-            for k in ['name', 'host', 'port']:
-                if k not in mongo:
-                    log.print_err("mongo config error, key mongo.{} is not set yet".format(k))
-                    result = False
+            if self.config['no_mongo'] is False:
+                log.print_info('check mongodb config')
+                mongo = self.config['mongo']
+                for k in ['name', 'host', 'port']:
+                    if k not in mongo:
+                        log.print_err("mongo config error, key mongo.{} is not set yet".format(k))
+                        result = False
 
-            # try import model, which will connect to server and exit if server config wrong
-            import NXSpider.model.mongo_model
+                # try import model, which will connect to server and exit if server config wrong
+                import NXSpider.model.mongo_model
 
-            for k in ['download_path', 'mv_def_resolution', 'media_tag', 'media_tag_163']:
-                if k not in self.config:
-                    log.print_err("config error, key {} is not set yet".format(k))
-                    result = False
+                for k in ['download_path', 'mv_def_resolution', 'media_tag', 'media_tag_163']:
+                    if k not in self.config:
+                        log.print_err("config error, key {} is not set yet".format(k))
+                        result = False
 
             # check type
             type_check = {
@@ -144,11 +150,12 @@ class Config(Singleton):
                 'media_tag': bool,
                 'media_tag_163': bool,
                 'download_file_check': bool,
+                'no_mongo': bool,
             }
 
             need_save = False
-            for k, v in type_check:
-                if not isinstance(self.config[k], list):
+            for k, v in type_check.items():
+                if not isinstance(self.config[k], v):
                     log.print_err("config error, {} is not a require type, "
                                   "and is reset to default value: {}".format(k, self.default_config[k]))
                     self.config[k] = self.default_config[k]

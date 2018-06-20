@@ -6,7 +6,7 @@
 #
 import locale
 
-import eyed3
+# import eyed3
 from mutagen.mp4 import MP4
 
 from NXSpider.utility.idv3_base import delete_163comment

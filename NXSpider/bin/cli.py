@@ -13,6 +13,7 @@ from NXSpider.bin.config_ctrl import ConfigController
 from NXSpider import version
 from colorama import init
 
+from NXSpider.bin.show_ctrl import ShowController
 from NXSpider.bin.spider_ctrl import SpiderController
 from NXSpider.common.config import Config
 
@@ -23,6 +24,7 @@ Copyright (c) {} {}
            version.__author__, datetime.datetime.now().year)
 
 init(autoreset=True)
+
 
 class VersionController(CementBaseController):
     class Meta:
@@ -37,12 +39,14 @@ class App(CementApp):
     class Meta:
         label = "NXSpider"
         base_controller = "base"
-        handlers = [VersionController, ConfigController, SpiderController]
+        handlers = [VersionController, ConfigController,
+                    SpiderController, ShowController]
 
 
 def main():
     with App() as app:
         app.run()
+
 
 if __name__ == "__main__":
     main()

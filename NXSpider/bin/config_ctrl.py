@@ -30,6 +30,8 @@ class ConfigController(CementBaseController):
              dict(help="mongo password")),
             (['-mn', '--mdbname'],
              dict(help="mongo db name, default nxspider")),
+            (['-nomongo', '--nomongo'],
+             dict(help="no mongo mode, true(1) or false(0), default True, while true, mongodb will be never used")),
 
             (['-path', '--path_download'],
              dict(help="download path, default ~/.nxspider/download_files/, eg. -path defualt;path1;path2")),
@@ -53,6 +55,7 @@ class ConfigController(CementBaseController):
         try:
             if self.app.pargs.mhost is not None:
                 config_dict[mongo_key]['host'] = self.app.pargs.mhost
+                config_dict['no_mongo'] = False
                 is_config = True
 
             if self.app.pargs.mport is not None:
@@ -71,6 +74,9 @@ class ConfigController(CementBaseController):
                 config_dict[mongo_key]['name'] = self.app.pargs.mdbname
                 is_config = True
 
+            if self.app.pargs.nomongo is not None:
+                config_dict['no_mongo'] = True if self.app.pargs.nomongo.lower() == 'true'\
+                                                   or self.app.pargs.nomongo == '1' else False
         except:
             log.print_err("input error, pls check")
             raise
@@ -139,11 +145,12 @@ class ConfigController(CementBaseController):
         self.config_show()
 
     @expose(help="check config is valid or not")
-    def config_test(self):
+    def config_check(self):
         self.config_show()
         try:
             config = Config()
-            config.config_test()
+            if config.config_test():
+                log.print_info('config check complete, all is well done!')
         except:
             log.print_err('config check failed, pls re config')
 

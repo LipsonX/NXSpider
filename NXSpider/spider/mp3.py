@@ -4,14 +4,16 @@
 # created by Lipson on 2018/4/23.
 # email to LipsonChan@yahoo.com
 #
-import os
+
 import re
-from NXSpider.model.mongo_model import Mp3Model
+
+import os
+
 from NXSpider.spider.album import Album
 from NXSpider.spider.api import get_mp3_link, get_mv_detail
 from NXSpider.spider.artist import Artist
 from NXSpider.spider.mv import MV
-from NXSpider.spider.base_driver import Music163Obj, attr_replace
+from NXSpider.spider.base_driver import *
 
 
 class Mp3(Music163Obj):

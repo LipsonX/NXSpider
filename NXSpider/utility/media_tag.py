@@ -13,7 +13,7 @@ from mutagen.mp4 import MP4
 
 from NXSpider.common.config import Config
 from NXSpider.common.encrypt import aes_ecb
-from NXSpider.model.mongo_model import Mp3Model, Mp4Model
+from NXSpider.model.export import Mp3Model, Mp4Model
 
 key_names = ['title', 'artist', 'album', 'album_artist', 'track_num', 'comment']
 encoding_keys = ['title', 'artist', 'album', 'album_artist', 'comment']
