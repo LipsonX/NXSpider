@@ -6,12 +6,15 @@
 #
 import re
 from collections import OrderedDict
+from functools import reduce
 
 import requests
 from terminaltables import AsciiTable
 
 from NXSpider.common import log
 from NXSpider.spider.common_keys import encrypted_request
+
+base_url = "http://music.163.com"
 
 headers = {
     'Referer': 'http://music.163.com/',
@@ -55,6 +58,8 @@ PLAYLIST_CLASSES = OrderedDict([
     ('主题', ['影视原声', 'ACG', '儿童', '校园', '游戏', '70后', '80后', '90后', '网络歌曲', 'KTV', '经典', '翻唱', '吉他', '钢琴', '器乐', '榜单', '00后'])
 ])
 
+ALL_CLASSES = reduce(lambda x,y : x + y, [v for k,v in PLAYLIST_CLASSES.items()])
+
 # 搜索单曲(1)，歌手(100)，专辑(10)，歌单(1000)，用户(1002) *(type)*
 search_types = {
     'mp3': 1,
@@ -79,6 +84,7 @@ def api_request(url, data=None, method="get", json=True,
     :param headers:
     :return:
     """
+    url = base_url + url
     if data and method == 'get':
         method = 'post'
     request_obj = session or requests
@@ -96,7 +102,7 @@ def api_request(url, data=None, method="get", json=True,
 
 
 def get_top_songlist(idx=0, offset=0):
-    action = 'http://music.163.com' + TOP_LIST_ALL[idx][1]
+    action = TOP_LIST_ALL[idx][1]
     res = api_request(action, json=False)
     if not res:
         return None
@@ -114,7 +120,7 @@ def get_mp3_link(song_id):
     # obj = '{"ids":[' + str(song_id) + '], br:"320000",csrf_token:"csrf"}'
     obj = {'ids': [song_id], 'br': 320000, 'csrf_token': 'csrf'}
     data = encrypted_request(obj)
-    url = "http://music.163.com/weapi/song/enhance/player/url?csrf_token="
+    url = "/weapi/song/enhance/player/url?csrf_token="
     res = api_request(url, data)
     if res and res['code'] == 200:
         return res['data'][0]['url']
@@ -124,7 +130,7 @@ def get_mp3_links(song_ids):
     # obj = '{"ids":[' + str(song_id) + '], br:"320000",csrf_token:"csrf"}'
     obj = {'ids': song_ids, 'br': 320000, 'csrf_token': 'csrf'}
     data = encrypted_request(obj)
-    url = "http://music.163.com/weapi/song/enhance/player/url?csrf_token="
+    url = "/weapi/song/enhance/player/url?csrf_token="
     res = api_request(url, data)
     if res and res['code'] == 200:
         return {x['id']: x['url'] for x in res['data']}
@@ -134,7 +140,7 @@ def get_mp3_details(song_ids, offset=0):
     tmpids = song_ids[offset:]
     tmpids = tmpids[0:100]
     tmpids = list(map(str, tmpids))
-    action = 'http://music.163.com/api/song/detail?ids=[{}]'.format(  # NOQA
+    action = '/api/song/detail?ids=[{}]'.format(  # NOQA
         ','.join(tmpids))
 
     res = api_request(action)
@@ -145,7 +151,7 @@ def get_mp3_details(song_ids, offset=0):
 def get_mv_link(mv_id, r):
     obj = {'id': mv_id, 'r': r, 'csrf_token': 'csrf'}
     data = encrypted_request(obj)
-    url = "http://music.163.com/weapi/song/enhance/download/mv/url?csrf_token="
+    url = "/weapi/song/enhance/download/mv/url?csrf_token="
 
     res = api_request(url, data)
     if res and res['code'] == 200:
@@ -155,14 +161,14 @@ def get_mv_link(mv_id, r):
 def get_mv_detail(mv_id):
     obj = {'id': mv_id, 'csrf_token': 'csrf'}
     data = encrypted_request(obj)
-    url = "http://music.163.com/weapi/v1/mv/detail?csrf_token="
+    url = "/weapi/v1/mv/detail?csrf_token="
 
     res = api_request(url, data)
     return res.get('data', None)
 
 
 def get_playlist_detail(playlist_id):
-    url = "http://music.163.com/api/playlist/detail?id={}&upd" \
+    url = "/api/playlist/detail?id={}&upd" \
         .format(playlist_id)
 
     res = api_request(url)
@@ -170,7 +176,7 @@ def get_playlist_detail(playlist_id):
 
 
 def get_playlist_detail_v3(id):
-    action = 'http://music.163.com/weapi/v3/playlist/detail'
+    action = '/weapi/v3/playlist/detail'
     csrf = ''
     obj = {'id': id, 'total': 'true', 'csrf_token': csrf, 'limit': 1000, 'n': 1000, 'offset': 0}
     data = encrypted_request(obj)
@@ -188,38 +194,43 @@ def get_top_playlists(category='全部', order='hot', offset=0, limit=50):
     :param limit:
     :return:
     """
-    action = 'http://music.163.com/api/playlist/list?cat={}&order={}&offset={}&total={}&limit={}'.format(  # NOQA
+    action = u'/api/playlist/list?cat={}&order={}&offset={}&total={}&limit={}'.format(  # NOQA
         category, order, offset, 'true' if offset else 'false',
         limit)  # NOQA
 
     res = api_request(action)
-    return res.get('playlist', None)
+    return res.get('playlists', None)
 
 
 # may be not useful
 def get_playlist_classes():
-    action = 'http://music.163.com/discover/playlist/'
+    action = '/weapi/playlist/catalogue'
     res = api_request(action, json=False)
     if res and res['code'] == 200:
         return re
 
 
+def get_playlist_catelogs():
+    path = '/weapi/playlist/catalogue'
+    return api_request(path, json=False)
+
+
 def top_artists(offset=0, limit=100):
-    action = 'http://music.163.com/api/artist/top?offset={}&total=false&limit={}'.format(  # NOQA
+    action = '/api/artist/top?offset={}&total=false&limit={}'.format(  # NOQA
         offset, limit)
     res = api_request(action)
     return res.get('artists', None)
 
 
 def get_artists_songs(artist_id):
-    action = 'http://music.163.com/api/artist/{}'.format(artist_id)
+    action = '/api/artist/{}'.format(artist_id)
     res = api_request(action)
     if res and res['code'] == 200:
         return res
 
 
 def get_artist_album(artist_id, offset=0, limit=50):
-    action = 'http://music.163.com/api/artist/albums/{}?offset={}&limit={}'.format(
+    action = '/api/artist/albums/{}?offset={}&limit={}'.format(
         artist_id, offset, limit)
     res = api_request(action)
     # if res and res['code'] == 200:
@@ -228,7 +239,7 @@ def get_artist_album(artist_id, offset=0, limit=50):
 
 
 def get_album_detail(album_id):
-    action = 'http://music.163.com/api/album/{}'.format(album_id)
+    action = '/api/album/{}'.format(album_id)
     res = api_request(action)
     return res.get('album', None)
 
@@ -240,7 +251,7 @@ def search(s, stype=1, offset=0, total='true', limit=60):
         else:
             return None
 
-    action = 'http://music.163.com/api/search/get'
+    action = '/api/search/get'
     data = {
         's': s,
         'type': stype,
@@ -254,7 +265,7 @@ def search(s, stype=1, offset=0, total='true', limit=60):
 
 # has been change, fuck!
 def user_playlist(uid, session=None, offset=0, limit=50):
-    action = 'http://music.163.com/api/user/playlist?csrf_token='
+    action = '/api/user/playlist?csrf_token='
     csrf = ''
     obj = {'uid': uid, 'csrf_token': csrf,
            'limit': limit, 'offset': offset,
@@ -266,26 +277,11 @@ def user_playlist(uid, session=None, offset=0, limit=50):
 
 
 def user_playlist_old(uid, offset=0, limit=100, session=None):
-    action = 'http://music.163.com/api/user/playlist/?offset={}&limit={}&uid={}'.format(  # NOQA
+    action = '/api/user/playlist/?offset={}&limit={}&uid={}'.format(  # NOQA
         offset, limit, uid)
 
     res = api_request(action, session=session)
     return res.get('playlist', None)
-
-
-def get_classify():
-    table = [["类别", "风格列表"]]
-    for k, v in PLAYLIST_CLASSES.items():
-        c = 0
-        lst = ""
-        for v in v:
-            c = c + 1
-            if c % 5 == 0:
-                lst = lst + v + "\n"
-            else:
-                lst = lst + v + ","
-        table.append([k, lst])
-    print(AsciiTable(table).table)
 
 
 def phone_login(username, password, session):
