@@ -13,6 +13,7 @@ from pymongo.errors import ServerSelectionTimeoutError
 
 from NXSpider.common import log
 from NXSpider.common.config import Config
+from NXSpider.model.export import *
 
 mongodb_conf = Config().get_mongo()
 
@@ -262,20 +263,3 @@ signals.pre_save.connect(update_timestamp, sender=AlbumModel)
 
 connect(mongodb_conf['name'], host=mongodb_conf['host'],
         port=mongodb_conf['port'], connectTimeoutMS=3000)
-
-
-__all__ = [
-    'ConfigModel',
-    'UserModel',
-    'AlbumModel',
-    'PlaylistModel',
-    'Mp4Model',
-    'ArtistModel',
-    'Mp3Model',
-    'AuthorModel',
-    'update_dynamic_doc',
-    'model_download_url',
-    'model_is_download',
-    'get_one_model_by_key',
-]
-
