@@ -54,7 +54,7 @@ class ShowController(NXSpiderBaseController):
                            ] for item in res['songs']]
             table.table_data.extend(table_data)
         elif search_key == 'playlist' and 'playlists' in res:
-            table = AsciiTable([["ID", "Name", "User", "PlayCount", "FavoriteCount", "ArtistID"]])
+            table = AsciiTable([["ID", "Name", "User", "PlayCount", "FavoriteCount"]])
             table_data = [[str(item['id']), item['name'],
                            item['creator']['nickname'],
                            str(item['playCount']),
@@ -77,7 +77,6 @@ class ShowController(NXSpiderBaseController):
                            ] for item in res['artists']]
             table.table_data.extend(table_data)
         elif search_key == 'album' and 'albums' in res:
-        # elif search_key == 'album':
             table = AsciiTable([["ID", "Album", "Artist", "ArtistID"]])
             table_data = [[str(item['id']), item['name'],
                            ','.join([ar['name'] for ar in item['artists']]),
@@ -113,7 +112,7 @@ class ShowController(NXSpiderBaseController):
         table = AsciiTable([["ID", "Name", "Artist", "Song", "Company"]])
         table_data = [[str(item['id']), item['name'],
                        item['artist']['name'], item['size'], item['company']
-                       ] for item in artist_detail]
+                       ] for item in artist_detail['hotAlbums']]
         table.table_data.extend(table_data)
         print(table.table)
         pass

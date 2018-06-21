@@ -19,7 +19,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 ## Windows用户
 ### 点赞
 - 请给项目点个star
-- 请感谢网易云，感谢上帝，感谢国家，顺便感谢作者
+- 请感谢网易云，感谢上帝，感谢国家，顺便的话感谢作者
 
 ### 下载python3
 - [点击这里下载(32)](https://www.python.org/ftp/python/3.6.5/python-3.6.5.exe) 或 [点击这里下载(64)](https://www.python.org/ftp/python/3.6.5/python-3.6.5-amd64.exe) 或 [自行选择](https://www.python.org/downloads/release/python-365/)
@@ -29,7 +29,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 - **强烈要求**大概在第二页勾选 ```Add Python to environment variables```
 ![img](img/python_install_2.png)
 - 后面一直按继续即可
-- 安装完毕后按住键盘 ```ctrl+R``` 在开始建附近会弹出个运行框，输入 ```cmd``` 回车
+- 安装完毕后按住键盘 ```ctrl+r``` 在开始建附近会弹出个运行框，输入 ```cmd``` 回车
 - 回车后会弹出个黑色界面，通常我们叫 console(控制台)，输入 ```python``` 并回车
 - 看到以下界面则为安装成功
 ![img](img/run_python.png)
@@ -52,10 +52,12 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
     nxspider sab -ab 19093 -dw mp3,mv 
     (-dw mp3,mv表示想要下载mp3和mv，不想下载mv则删除最后的,mv)
     
-搜索歌声的唱片集合，找到ID
+搜索歌神唱片找到ID：
+
 ![img](img/demo_search_xy.png)
 
-爬去歌声这个id为19093的专辑
+爬专辑19093：
+
 ![img](img/demo_spider_xy.png)
 
 ### 暴力下载最火歌单(不截图了)

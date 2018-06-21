@@ -19,4 +19,4 @@ def print_warn(msg):
 
 
 def print_info(msg):
-    print(Fore.BLUE + "INFO: " + msg)
+    print(Fore.GREEN + "INFO: " + msg)
