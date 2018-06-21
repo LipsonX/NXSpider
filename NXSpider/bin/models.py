@@ -51,6 +51,15 @@ album_mo = Album(
     __model_rfilter__={'artist'},
     __parse_recursion__={
         'mp3': dw_mp3_mo,
+        'artists': no_rec_artist_mo,
+    }
+)
+
+artist_album_mo = Artist(
+    __model_rfilter__={},
+    __parse_recursion__={
+        'albums': album_mo,
+        'artists': no_rec_artist_mo,
     }
 )
 
@@ -58,4 +67,5 @@ __all__ = [
     'album_mo',
     'artist_mo',
     'playlist_mo',
+    'artist_album_mo',
 ]

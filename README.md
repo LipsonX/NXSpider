@@ -10,7 +10,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)]()
 [![platform](https://img.shields.io/badge/python-3.5-green.svg)]()
 
-[非IT人员请看这里](SIMPLE_USE.md)
+[非IT人员或python苦手请看这里](SIMPLE_USE.md)
 
 ## 功能特性
 1. 采用命令行形式运行，配置在个人账号目录下```~/.nxspider/```
@@ -71,11 +71,12 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 	$nxspider config-check
 
 #### 配置说明
-1. **config-mongo必须运行爬取前配置!!!**，dbname可不指定，默认为nxspider
-2. path 强烈建议爬取前配置，```,``` 为多个下载路径分隔符。default指```~/.nxspider/download_files/```
-3. 其他配置可选，请查看 ```nxspider -h```
-4. ```-tag 1``` 建议保留 ```-tag163 1``` 根据需求保留
-5. 默认无mongodb模式，即 ```nxspider config-mongo -nomongo 1``` ，需要采集数据则通过配置第一条即可
+1. ~~config-mongo必须运行爬取前配置!!!，dbname可不指定，默认为nxspider~~
+2. 默认无mongodb模式，需要采集数据则通过配置第一条即可 `nxspider config-mongo ..`
+3. 一旦配置了 `mongodb -mh` 则 `-nomogo` 会自动设置为0，即配置了host就会使用的意思
+2. path **强烈建议**爬取前配置，```,``` 为多个下载路径分隔符。default指`~/.nxspider/download_files/`
+3. 其他配置可选，请查看 `nxspider -h`
+4. ```-tag 1``` 建议保留 `-tag163 1` 根据需求保留
 6. 配置完建议执行 ```nxspider config-check``` 检查配置正确性
 
 #### 搜索
@@ -109,14 +110,15 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 
 #### 系统兼容
-<table>
-	<tr> <td>win7(GBK) + python2</td> <td>字符集问题</td> </tr>
-	<tr> <td>win7(GBK) + python3</td> <td>通过</td> </tr>
-	<tr> <td>win10(GBK) + python2</td> <td>字符集问题</td> </tr>
-	<tr> <td>win10(GBK) + python3</td> <td>通过</td> </tr>
-	<tr> <td>centos7.2(utf8) + python2</td> <td>通过</td> </tr>
-	<tr> <td>centos7.2(utf8) + python3</td> <td>通过</td> </tr>
-	<tr> <td>mac + python</td> <td>待补充</td> </tr>
+| 系统及平台  |   结果     |
+|   ---     |    ---    |
+| win7(GBK) + python2 | 字符集问题 |
+| win7(GBK) + python3 | 通过 |
+| win10(GBK) + python2 | 字符集问题 |
+| win10(GBK) + python3 | 通过 |
+| centos7.2(utf8) + python2 | 通过 |
+| centos7.2(utf8) + python3 | 通过 |
+| mac + python | 待补充 |
 </table>
 
 #### 效果图示例
@@ -132,7 +134,7 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 
 ![img](img/mongodb_data.png)
 
-## 开发及问题
+## 开发及问题(不关心的可以不看了)
 
 ### 注意
 - 本项目纯粹是学习开发使用，欢迎大家互相讨论，下载的资料请24小时内删除
@@ -165,8 +167,8 @@ $bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
 - 新增通过获取最火playlist进行爬取
 
 ### 下阶段开发
-- 通过用户id，爬取该用户所有的歌单
-- 通过歌手id，爬取该歌手所有专辑
-- 通过排行版，爬取最新n个歌单
-- 通过登录，爬取用户收藏的歌单，mv
-- mongodb 可选？不强制（但对于离线则无法加tag，虽然只是个人用）
+- 通过用户id，爬取该用户所有的歌单 √
+- 通过歌手id，爬取该歌手所有专辑 √
+- 通过排行版，爬取最新n个歌单 √
+- mongodb 可选？不强制（但对于离线则无法加tag，虽然只是个人用） √
+- 通过登录(或非登录)，爬取用户收藏的歌单，mv

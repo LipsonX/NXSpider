@@ -233,9 +233,11 @@ def get_artist_album(artist_id, offset=0, limit=50):
     action = '/api/artist/albums/{}?offset={}&limit={}'.format(
         artist_id, offset, limit)
     res = api_request(action)
+    if res and res['code'] == 200:
+        return res
     # if res and res['code'] == 200:
     #     return res['hotAlbums']
-    return res.get('hotAlbums', None)
+    # return res.get('hotAlbums', None)
 
 
 def get_album_detail(album_id):
@@ -265,7 +267,7 @@ def search(s, stype=1, offset=0, total='true', limit=60):
 
 # has been change, fuck!
 def user_playlist(uid, session=None, offset=0, limit=50):
-    action = '/api/user/playlist?csrf_token='
+    action = '/weapi/user/playlist?csrf_token='
     csrf = ''
     obj = {'uid': uid, 'csrf_token': csrf,
            'limit': limit, 'offset': offset,
