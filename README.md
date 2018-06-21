@@ -10,7 +10,7 @@ NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv
 [![platform](https://img.shields.io/badge/python-2.7-green.svg)]()
 [![platform](https://img.shields.io/badge/python-3.5-green.svg)]()
 
-[非IT人员或python苦手请看这里](SIMPLE_USE.md)
+[非IT人员或python苦手请看这里](SIMPLE_USE.md)  [历史版本在这里](VERSION.md)
 
 ## 功能特性
 1. 采用命令行形式运行，配置在个人账号目录下```~/.nxspider/```
