@@ -60,6 +60,9 @@ PLAYLIST_CLASSES = OrderedDict([
 
 ALL_CLASSES = reduce(lambda x, y: x + y, [v for k, v in PLAYLIST_CLASSES.items()])
 
+MV_TYPE = ['ALL', 'ZH', 'EA', 'KR', 'JP']
+
+
 # 搜索单曲(1)，歌手(100)，专辑(10)，歌单(1000)，用户(1002) *(type)*
 search_types = {
     'mp3': 1,
@@ -85,10 +88,7 @@ def api_request(url, data=None, method="get", json=True,
     :return:
     """
     url = base_url + url
-    if data and method == 'get':
-        method = 'post'
     request_obj = session or requests
-    request_method = getattr(request_obj, method, None) or request_obj.get
 
     # update cookies
     if isinstance(request_obj, requests.Session):
@@ -100,6 +100,8 @@ def api_request(url, data=None, method="get", json=True,
     # encrypt
     data = encrypted_request(data)
 
+    method = 'get' if not data and method == 'get' else 'post'
+    request_method = getattr(request_obj, method, None) or request_obj.get
     try:
         req = request_method(url, data=data, headers=headers, timeout=10)
         req.encoding = "UTF-8"
@@ -292,25 +294,29 @@ def user_playlist_old(uid, offset=0, limit=100, session=None):
     return res.get('playlist', None)
 
 
+def my_subcount(session):
+    action = '/weapi/subcount'
+    res = api_request(action, data={}, session=session)
+
+    return res
+
+
 def my_mvs(session):
-    # todo, wait to debug
-    action = '/#/my/m/music/mv'
-    res = api_request(action, session=session, json=False)
+    action = '/weapi/mv/sublist'
+    data = dict(
+        offset=0,
+        limit=1000,
+    )
+    res = api_request(action, data=data, session=session)
 
-    mvids = re.findall(r'/mv\?id=(\d+)', res)
-    if not mvids:
-        return []
-
-    mvids = list(set(mvids))
-    details = [get_mv_detail(i) for i in mvids]
-    return details
+    return res.get('data', [])
 
 
 def hot_mvs():
     # todo, wait to find out how to encrypt and decrypt
     action = '/api/mv/toplist'
     action = '/api/mv/first'
-    action = '/api/mv/hot'
+    action = '/api/mv/hot'  # well done
 
     data = dict(
         cat=u'内地',
@@ -319,6 +325,37 @@ def hot_mvs():
         limit=50,
     )
 
+    res = api_request(action, data=data)
+    return res
+
+
+def top_mvs(offset=0, limit=50, type='ALL'):
+    # todo, wait to find out how to encrypt and decrypt
+    action = '/api/mv/toplist'  # o, l
+    action = '/api/mv/first'
+    action = '/api/mv/all'  # well done, o, l
+
+    action = '/weapi/mv/all'
+
+    data = dict(
+        area='kr',
+        # type='JP',
+        # total='true',
+        # order='hot',
+        offset=0,
+        limit=20,
+    )
+
+    res = api_request(action, data=data)
+    return res
+
+
+def all_mvs(offset=0, limit=50):
+    action = '/weapi/mv/all'
+    data = dict(
+        offset=offset,
+        limit=limit,
+    )
     res = api_request(action, data=data)
     return res
 

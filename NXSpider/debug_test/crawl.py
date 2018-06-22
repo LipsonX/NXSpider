@@ -13,7 +13,7 @@ from NXSpider.common.constant import all_download_type
 from NXSpider.spider.api import get_playlist_detail, get_mp3_links, get_album_detail, get_top_playlists, \
     get_playlist_classes, \
     top_artists, get_artists_songs, get_artist_album, get_mp3_details, search, phone_login, login, user_playlist, \
-    get_playlist_detail_v3, get_playlist_catelogs, get_classify
+    get_playlist_detail_v3, get_playlist_catelogs, hot_mvs, all_mvs, top_mvs
 from NXSpider.spider.playlist import Playlist
 
 
@@ -60,7 +60,9 @@ def playlist_by_id(link, download_type=all_download_type,
 #         playlist_by_page(i + 1, cf)
 
 # test = get_mv_details([5322493,239037])
-test = get_classify()
+test = top_mvs()
+test = all_mvs()
+test = hot_mvs()
 test = get_playlist_catelogs()
 test = get_playlist_classes()
 test = get_top_playlists()
@@ -73,7 +75,6 @@ test = get_playlist_detail_v3(107020750)
 p = hashlib.md5('000'.encode('utf-8')).hexdigest()
 s = requests.Session()
 
-test = login('15302663382', p, s)
 test = user_playlist(92024088, session=s)
 test = get_playlist_detail(107020750)
 

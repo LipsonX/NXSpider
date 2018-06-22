@@ -242,11 +242,19 @@ class SpiderController(NXSpiderBaseController):
             return
 
         session = requests.session()
-        re = api.login(self.app.pargs.lu, self.app.pargs.lp, session)
-        if getattr(re, 'code', 0) != 200:
-            log.print_err('login failed, msg: {}'.format(getattr(re, 'msg', "none")))
+        import hashlib
+        password = hashlib.md5(self.app.pargs.lp).hexdigest()
+        res = api.login(self.app.pargs.lu, password, session)
+        if res.get('code', 0) != 200:
+            log.print_err('login failed, msg: {}'.format(res.get('msg', "none")))
             exit()
 
-        # todo
-        log.print_info("func not complete yet, wait maybe")
+        mvs = api.my_mvs(session)
+
+        for mv in mvs:
+            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
+                                     file_check=Config().get_file_check())
+
+        log.print_info("spider complete!~")
+
         pass
