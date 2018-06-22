@@ -98,7 +98,7 @@ def api_request(url, data=None, method="get", json=True,
         return res
     except requests.exceptions.RequestException as e:
         log.print_warn("request error: %s" % url)
-        return None
+        return {}
 
 
 def get_top_songlist(idx=0, offset=0):
