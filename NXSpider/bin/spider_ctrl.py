@@ -6,6 +6,7 @@
 #
 import sys
 
+import requests
 from cement.core.controller import expose
 
 from NXSpider.bin.base_ctrl import NXSpiderBaseController, py2_decoding, py2_encoding
@@ -40,6 +41,10 @@ class SpiderController(NXSpiderBaseController):
              dict(help="offset index, eg. -offset 50")),
             (['-limit'],
              dict(help="limit size, eg. -limit 50")),
+            (['-lu'],
+             dict(help="login user or phone number")),
+            (['-lp'],
+             dict(help="login password")),
         ]
 
     @expose(help="spider playlist, usage: spls -pl <playlist_id,id2,id3> [-dw <mv,mp3>] ")
@@ -226,4 +231,22 @@ class SpiderController(NXSpiderBaseController):
                                         download_type=download_type,
                                         file_check=Config().get_file_check())
         log.print_info("spider complete!~")
+        pass
+
+    @expose(
+        help="login and spider mv, usage: login-smv -lu <login user> -lp <login password>")
+    def login_smv(self):
+        from NXSpider.bin.models import no_rec_mv_mo
+
+        if self.param_check(['lu', 'lp'], sys._getframe().f_code.co_name) is False:
+            return
+
+        session = requests.session()
+        re = api.login(self.app.pargs.lu, self.app.pargs.lp, session)
+        if getattr(re, 'code', 0) != 200:
+            log.print_err('login failed, msg: {}'.format(getattr(re, 'msg', "none")))
+            exit()
+
+        # todo
+        log.print_info("func not complete yet, wait maybe")
         pass
