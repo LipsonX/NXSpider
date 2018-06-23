@@ -28,10 +28,6 @@ SOFTWARE.
 import codecs
 import contextlib
 import hashlib
-import json
-import requests
-from bs4 import BeautifulSoup
-
 import locale
 
 from NXSpider.common import PYTHON3
@@ -71,20 +67,6 @@ def md5(s):
     m = hashlib.md5()
     m.update(s.encode("utf-8"))
     return m.hexdigest()
-
-
-def curl(url, headers, type=RETURN_JSON):
-    try:
-        s = requests.session()
-        bs = BeautifulSoup(s.get(url, headers=headers).content, "html.parser")
-        if type == RETURN_JSON:
-            return json.loads(bs.text)
-        elif type == RETURE_HTML:
-            return bs
-        else:
-            return bs.text
-    except Exception:
-        raise
 
 
 def is_unicode(obj):
