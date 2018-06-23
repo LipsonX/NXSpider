@@ -5,6 +5,7 @@
 # email to LipsonChan@yahoo.com
 #
 
+
 class Singleton(object):
     """Singleton Class
     This is a class to make some class being a Singleton class.

@@ -14,6 +14,7 @@ from NXSpider.common import log
 from NXSpider.spider.common_keys import encrypted_request
 
 base_url = "http://music.163.com"
+base_https_url = "https://music.163.com"
 
 headers = {
     'Referer': 'http://music.163.com/',
@@ -75,9 +76,11 @@ search_types = {
 
 
 def api_request(url, data=None, method="get", json=True,
-                session=None, headers=headers):
+                session=None, headers=headers, encrypt=True, https=False):
     """
     request and try
+    :param https:
+    :param encrypt:
     :param url:
     :param data:
     :param method:
@@ -87,7 +90,7 @@ def api_request(url, data=None, method="get", json=True,
     :param headers:
     :return:
     """
-    url = base_url + url
+    url = base_https_url + url if https else base_url + url
     request_obj = session or requests
 
     # update cookies
@@ -98,7 +101,8 @@ def api_request(url, data=None, method="get", json=True,
                 break
 
     # encrypt
-    data = encrypted_request(data)
+    if encrypt:
+        data = encrypted_request(data)
 
     method = 'get' if not data and method == 'get' else 'post'
     request_method = getattr(request_obj, method, None) or request_obj.get
@@ -271,7 +275,7 @@ def search(s, stype=1, offset=0, total='true', limit=60):
         'total': total,
         'limit': limit
     }
-    res = api_request(action, data)
+    res = api_request(action, data, encrypt=False)
     return res.get('result', None)
 
 
@@ -329,25 +333,15 @@ def hot_mvs():
     return res
 
 
-def top_mvs(offset=0, limit=50, type='ALL'):
-    # todo, wait to find out how to encrypt and decrypt
-    action = '/api/mv/toplist'  # o, l
-    action = '/api/mv/first'
-    action = '/api/mv/all'  # well done, o, l
-
-    action = '/weapi/mv/all'
-
+def top_mvs(offset=0, limit=50):
+    action = '/weapi/mv/toplist'
     data = dict(
-        area='kr',
-        # type='JP',
-        # total='true',
-        # order='hot',
-        offset=0,
-        limit=20,
+        offset=offset,
+        limit=limit,
     )
 
     res = api_request(action, data=data)
-    return res
+    return res.get('data', [])
 
 
 def all_mvs(offset=0, limit=50):
@@ -357,7 +351,7 @@ def all_mvs(offset=0, limit=50):
         limit=limit,
     )
     res = api_request(action, data=data)
-    return res
+    return res.get('data', [])
 
 
 def phone_login(username, password, session):
@@ -401,6 +395,6 @@ def login(username, password, session):
         'rememberLogin': 'true',
         'clientToken': client_token,
     }
-    res = api_request(action, data=data, session=session)
+    res = api_request(action, data=data, session=session, https=True)
     if res:
         return res

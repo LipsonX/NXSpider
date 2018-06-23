@@ -27,6 +27,7 @@ def aes(text, sec_key):
     ciphertext = base64.b64encode(ciphertext)
     return ciphertext
 
+
 def aes_ecb_decode(text, sec_key):
     backend = default_backend()
     ciphertext = base64.b64decode(text)
@@ -38,6 +39,7 @@ def aes_ecb_decode(text, sec_key):
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext) + decryptor.finalize()
     return plaintext
+
 
 def aes_ecb(text, sec_key):
     backend = default_backend()

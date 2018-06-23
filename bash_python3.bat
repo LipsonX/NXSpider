@@ -11,6 +11,8 @@ goto start
 :start
 setlocal
 
+echo "you need replace ',' by ':' in this bat"
+
 :: get all params
 :param
 set str=%1

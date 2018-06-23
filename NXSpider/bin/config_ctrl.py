@@ -77,6 +77,7 @@ class ConfigController(CementBaseController):
             if self.app.pargs.nomongo is not None:
                 config_dict['no_mongo'] = True if self.app.pargs.nomongo.lower() == 'true'\
                                                    or self.app.pargs.nomongo == '1' else False
+                is_config = True
         except:
             log.print_err("input error, pls check")
             raise

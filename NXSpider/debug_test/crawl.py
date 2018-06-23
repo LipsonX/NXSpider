@@ -16,21 +16,20 @@ from NXSpider.spider.api import get_playlist_detail, get_mp3_links, get_album_de
     get_playlist_detail_v3, get_playlist_catelogs, hot_mvs, all_mvs, top_mvs
 from NXSpider.spider.playlist import Playlist
 
-
-def playlist_by_id(link, download_type=all_download_type,
-                   save=True, file_check=True):
-    playlist_detail = get_playlist_detail(link)
-    with tools.ignored(Exception):
-        log.print_info("%s author：%s" % (
-            "<" + playlist_detail['name'] + ">",
-            playlist_detail['creator']['nickname'],
-        ))
-
-    playlist_mo = Playlist()
-    playlist_mo.parse_model(playlist_detail,
-                            save=save, download_type=download_type,
-                            file_check=file_check)
-    pass
+# def playlist_by_id(link, download_type=all_download_type,
+#                    save=True, file_check=True):
+#     playlist_detail = get_playlist_detail(link)
+#     with tools.ignored(Exception):
+#         log.print_info("%s author：%s" % (
+#             "<" + playlist_detail['name'] + ">",
+#             playlist_detail['creator']['nickname'],
+#         ))
+#
+#     playlist_mo = Playlist()
+#     playlist_mo.parse_model(playlist_detail,
+#                             save=save, download_type=download_type,
+#                             file_check=file_check)
+#     pass
 
 
 # def playlist_by_page(page, type=u"全部"):

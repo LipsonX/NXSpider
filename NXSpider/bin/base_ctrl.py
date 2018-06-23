@@ -17,6 +17,7 @@ def py2_decoding(string):
         return string.decode(sys.getfilesystemencoding())
     return string
 
+
 def py2_encoding(string):
     if PYTHON2:
         return string.encode('utf8')

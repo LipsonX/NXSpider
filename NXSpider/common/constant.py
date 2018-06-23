@@ -6,7 +6,6 @@
 #
 import os
 
-# version = '0.0.1'
 
 all_download_type = ['mp3', 'mv']
 main_dir = os.path.join(os.path.expanduser('~'), '.nxspider')

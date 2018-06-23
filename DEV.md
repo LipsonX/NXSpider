@@ -11,12 +11,39 @@ NXSpider，一个强大的（网易云音乐）mp3,mv爬虫，可以下载和收
 
 ## 开发及问题(不关心的可以不看了)
 
+### 开发调试
+1. 已安装则采用(下文采用该方式进行说明)：
+```
+$nxspider ...
+```
+2. 未安装+win采用(未安装指没执行setup.py,只用代码运行)：
+```
+bash_python(3) NXSipder/bin/cli.py ...
+```
+3. 未安装+linux采用：
+```
+PYTHONPATH=. python(3) NXSipder/bin/cli.py ...
+```
+4. 注意,win下采用bash_python时，分割符 ```,``` 必须改为 ```:``` eg.
+```
+$bash_python.bat NXSpider/bin/cli.py config-spider -path d:\netease_dw:default
+```
+
+### 配置说明
+1. ~~config-mongo必须运行爬取前配置!!!，dbname可不指定，默认为nxspider~~
+2. 默认无mongodb模式，需要采集数据则通过配置第一条即可 `nxspider config-mongo ..`
+3. 一旦配置了 `mongodb -mh` 则 `-nomogo` 会自动设置为0，即配置了host就会使用的意思
+2. path **强烈建议**爬取前配置，```,``` 为多个下载路径分隔符。default指`~/.nxspider/download_files/`
+3. 其他配置可选，请查看 `nxspider -h`
+4. ```-tag 1``` 建议保留 `-tag163 1` 根据需求保留
+6. 配置完建议执行 ```nxspider config-check``` 检查配置正确性
+
 ### 注意
 - 本项目纯粹是学习开发使用，欢迎大家互相讨论，下载的资料请24小时内删除
 - 涉及侵权以及版权问题欢迎讨论和提出
 
 ### 协助开发或2次开发建议
-1. 希望尽可能(yahoo邮件)跟作者(LipsonChan)联系，以及对项目进行加❤
+1. 希望尽可能(yahoo邮件)跟作者(LipsonChan)联系，以及对项目进行加★
 2. 核心代码为NXSpider/bin以及NXSpider/spider/base_driver.py
 3. 主要逻辑为通过api获得对于json数据，采用递归+配置方式，自动下载可下载对象
 4. 如果有任何反馈，希望回复到项目的issue,注明版本号，运行环境及描述清楚问题
