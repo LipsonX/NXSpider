@@ -9,12 +9,12 @@ from collections import OrderedDict
 from functools import reduce
 
 import requests
-from terminaltables import AsciiTable
 
 from NXSpider.common import log
 from NXSpider.spider.common_keys import encrypted_request
 
 base_url = "http://music.163.com"
+base_https_url = "https://music.163.com"
 
 headers = {
     'Referer': 'http://music.163.com/',
@@ -52,13 +52,17 @@ TOP_LIST_ALL = {
 
 PLAYLIST_CLASSES = OrderedDict([
     ('语种', ['华语', '欧美', '日语', '韩语', '粤语', '小语种']),
-    ('风格', ['流行', '摇滚', '民谣', '电子', '舞曲', '说唱', '轻音乐', '爵士', '乡村', 'R&B/Soul', '古典', '民族', '英伦', '金属', '朋克', '蓝调', '雷鬼', '世界音乐', '拉丁', '另类/独立', 'New Age', '古风', '后摇', 'Bossa Nova']),
+    ('风格', ['流行', '摇滚', '民谣', '电子', '舞曲', '说唱', '轻音乐', '爵士', '乡村', 'R&B/Soul', '古典', '民族', '英伦', '金属', '朋克', '蓝调', '雷鬼',
+            '世界音乐', '拉丁', '另类/独立', 'New Age', '古风', '后摇', 'Bossa Nova']),
     ('场景', ['清晨', '夜晚', '学习', '工作', '午休', '下午茶', '地铁', '驾车', '运动', '旅行', '散步', '酒吧']),
     ('情感', ['怀旧', '清新', '浪漫', '性感', '伤感', '治愈', '放松', '孤独', '感动', '兴奋', '快乐', '安静', '思念']),
     ('主题', ['影视原声', 'ACG', '儿童', '校园', '游戏', '70后', '80后', '90后', '网络歌曲', 'KTV', '经典', '翻唱', '吉他', '钢琴', '器乐', '榜单', '00后'])
 ])
 
-ALL_CLASSES = reduce(lambda x,y : x + y, [v for k,v in PLAYLIST_CLASSES.items()])
+ALL_CLASSES = reduce(lambda x, y: x + y, [v for k, v in PLAYLIST_CLASSES.items()])
+
+MV_TYPE = ['ALL', 'ZH', 'EA', 'KR', 'JP']
+
 
 # 搜索单曲(1)，歌手(100)，专辑(10)，歌单(1000)，用户(1002) *(type)*
 search_types = {
@@ -72,9 +76,11 @@ search_types = {
 
 
 def api_request(url, data=None, method="get", json=True,
-                session=None, headers=headers):
+                session=None, headers=headers, encrypt=True, https=False):
     """
     request and try
+    :param https:
+    :param encrypt:
     :param url:
     :param data:
     :param method:
@@ -84,10 +90,21 @@ def api_request(url, data=None, method="get", json=True,
     :param headers:
     :return:
     """
-    url = base_url + url
-    if data and method == 'get':
-        method = 'post'
+    url = base_https_url + url if https else base_url + url
     request_obj = session or requests
+
+    # update cookies
+    if isinstance(request_obj, requests.Session):
+        for cookie in request_obj.cookies:
+            if cookie.name == '__csrf':
+                data['csrf_token'] = cookie.value
+                break
+
+    # encrypt
+    if encrypt:
+        data = encrypted_request(data)
+
+    method = 'get' if not data and method == 'get' else 'post'
     request_method = getattr(request_obj, method, None) or request_obj.get
     try:
         req = request_method(url, data=data, headers=headers, timeout=10)
@@ -96,9 +113,12 @@ def api_request(url, data=None, method="get", json=True,
         # if session:
         #     session.cookies.save()
         return res
+    except ValueError as e:
+        log.print_err("api do not return a valuable json")
+        return {}
     except requests.exceptions.RequestException as e:
         log.print_warn("request error: %s" % url)
-        return None
+        return {}
 
 
 def get_top_songlist(idx=0, offset=0):
@@ -118,9 +138,8 @@ def get_top_songlist(idx=0, offset=0):
 
 def get_mp3_link(song_id):
     # obj = '{"ids":[' + str(song_id) + '], br:"320000",csrf_token:"csrf"}'
-    obj = {'ids': [song_id], 'br': 320000, 'csrf_token': 'csrf'}
-    data = encrypted_request(obj)
-    url = "/weapi/song/enhance/player/url?csrf_token="
+    data = {'ids': [song_id], 'br': 320000, 'csrf_token': 'csrf'}
+    url = "/weapi/song/enhance/player/url"
     res = api_request(url, data)
     if res and res['code'] == 200:
         return res['data'][0]['url']
@@ -128,9 +147,8 @@ def get_mp3_link(song_id):
 
 def get_mp3_links(song_ids):
     # obj = '{"ids":[' + str(song_id) + '], br:"320000",csrf_token:"csrf"}'
-    obj = {'ids': song_ids, 'br': 320000, 'csrf_token': 'csrf'}
-    data = encrypted_request(obj)
-    url = "/weapi/song/enhance/player/url?csrf_token="
+    data = {'ids': song_ids, 'br': 320000, 'csrf_token': 'csrf'}
+    url = "/weapi/song/enhance/player/url"
     res = api_request(url, data)
     if res and res['code'] == 200:
         return {x['id']: x['url'] for x in res['data']}
@@ -149,9 +167,8 @@ def get_mp3_details(song_ids, offset=0):
 
 
 def get_mv_link(mv_id, r):
-    obj = {'id': mv_id, 'r': r, 'csrf_token': 'csrf'}
-    data = encrypted_request(obj)
-    url = "/weapi/song/enhance/download/mv/url?csrf_token="
+    data = {'id': mv_id, 'r': r, 'csrf_token': 'csrf'}
+    url = "/weapi/song/enhance/download/mv/url"
 
     res = api_request(url, data)
     if res and res['code'] == 200:
@@ -159,9 +176,8 @@ def get_mv_link(mv_id, r):
 
 
 def get_mv_detail(mv_id):
-    obj = {'id': mv_id, 'csrf_token': 'csrf'}
-    data = encrypted_request(obj)
-    url = "/weapi/v1/mv/detail?csrf_token="
+    data = {'id': mv_id, 'csrf_token': 'csrf'}
+    url = "/weapi/v1/mv/detail"
 
     res = api_request(url, data)
     return res.get('data', None)
@@ -177,9 +193,7 @@ def get_playlist_detail(playlist_id):
 
 def get_playlist_detail_v3(id):
     action = '/weapi/v3/playlist/detail'
-    csrf = ''
-    obj = {'id': id, 'total': 'true', 'csrf_token': csrf, 'limit': 1000, 'n': 1000, 'offset': 0}
-    data = encrypted_request(obj)
+    data = {'id': id, 'total': 'true', 'csrf_token': 'csrf', 'limit': 1000, 'n': 1000, 'offset': 0}
 
     res = api_request(action, data)
     return res.get('playlist', None)
@@ -261,18 +275,16 @@ def search(s, stype=1, offset=0, total='true', limit=60):
         'total': total,
         'limit': limit
     }
-    res = api_request(action, data)
+    res = api_request(action, data, encrypt=False)
     return res.get('result', None)
 
 
 # has been change, fuck!
 def user_playlist(uid, session=None, offset=0, limit=50):
-    action = '/weapi/user/playlist?csrf_token='
-    csrf = ''
-    obj = {'uid': uid, 'csrf_token': csrf,
-           'limit': limit, 'offset': offset,
-           'wordwrap': 7}
-    data = encrypted_request(obj)
+    action = '/weapi/user/playlist'
+    data = {'uid': uid, 'csrf_token': 'csrf',
+            'limit': limit, 'offset': offset,
+            'wordwrap': 7}
 
     res = api_request(action, data=data, session=session)
     return res.get('playlist', None)
@@ -286,6 +298,62 @@ def user_playlist_old(uid, offset=0, limit=100, session=None):
     return res.get('playlist', None)
 
 
+def my_subcount(session):
+    action = '/weapi/subcount'
+    res = api_request(action, data={}, session=session)
+
+    return res
+
+
+def my_mvs(session):
+    action = '/weapi/mv/sublist'
+    data = dict(
+        offset=0,
+        limit=1000,
+    )
+    res = api_request(action, data=data, session=session)
+
+    return res.get('data', [])
+
+
+def hot_mvs():
+    # todo, wait to find out how to encrypt and decrypt
+    action = '/api/mv/toplist'
+    action = '/api/mv/first'
+    action = '/api/mv/hot'  # well done
+
+    data = dict(
+        cat=u'内地',
+        order='hot',
+        offset=0,
+        limit=50,
+    )
+
+    res = api_request(action, data=data)
+    return res
+
+
+def top_mvs(offset=0, limit=50):
+    action = '/weapi/mv/toplist'
+    data = dict(
+        offset=offset,
+        limit=limit,
+    )
+
+    res = api_request(action, data=data)
+    return res.get('data', [])
+
+
+def all_mvs(offset=0, limit=50):
+    action = '/weapi/mv/all'
+    data = dict(
+        offset=offset,
+        limit=limit,
+    )
+    res = api_request(action, data=data)
+    return res.get('data', [])
+
+
 def phone_login(username, password, session):
     """
 
@@ -295,13 +363,12 @@ def phone_login(username, password, session):
     :type session: requests.Session
     :return:
     """
-    action = 'https://music.163.com/weapi/login/cellphone'
-    obj = {
+    action = '/weapi/login/cellphone'
+    data = {
         'phone': username,
         'password': password,
         'rememberLogin': 'true'
     }
-    data = encrypted_request(obj)
 
     res = api_request(action, data=data, session=session)
     if res:
@@ -310,24 +377,24 @@ def phone_login(username, password, session):
 
 def login(username, password, session):
     """
-
+    :type username: str
     :param username:
     :param password: must be encrypt by md5 hex
     :param session:
     :type session: requests.Session
     :return:
     """
-    pattern = re.compile(r'^0\d{2,3}\d{7,8}$|^1[34578]\d{9}$')
-    if pattern.match(username):
+    if username.isdigit():
         return phone_login(username, password, session)
-    action = 'https://music.163.com/weapi/login?csrf_token='
+    action = '/weapi/login'
+    client_token = '1_jVUMqWEPke0/1/Vu56xCmJpo5vP1grjn_SOVVDzOc78w8OKLVZ2JH7IfkjSXqgfmh'
     session.cookies.load()
-    obj = {
+    data = {
         'username': username,
         'password': password,
-        'rememberLogin': 'true'
+        'rememberLogin': 'true',
+        'clientToken': client_token,
     }
-    data = encrypted_request(obj)
-    res = api_request(action, data=data, session=session)
+    res = api_request(action, data=data, session=session, https=True)
     if res:
         return res

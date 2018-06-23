@@ -6,9 +6,11 @@
 #
 import sys
 
+import requests
 from cement.core.controller import expose
 
 from NXSpider.bin.base_ctrl import NXSpiderBaseController, py2_decoding, py2_encoding
+from NXSpider.bin.print_as_table import print_playlist, print_albums
 from NXSpider.common import log
 from NXSpider.common.config import Config
 from NXSpider.spider import api
@@ -40,6 +42,10 @@ class SpiderController(NXSpiderBaseController):
              dict(help="offset index, eg. -offset 50")),
             (['-limit'],
              dict(help="limit size, eg. -limit 50")),
+            (['-lu'],
+             dict(help="login user or phone number")),
+            (['-lp'],
+             dict(help="login password")),
         ]
 
     @expose(help="spider playlist, usage: spls -pl <playlist_id,id2,id3> [-dw <mv,mp3>] ")
@@ -85,6 +91,9 @@ class SpiderController(NXSpiderBaseController):
         playlists = api.get_top_playlists(category=class_name,
                                           offset=self.app.pargs.offset or 0,
                                           limit=self.app.pargs.limit or 50)  # type: list
+
+        log.print_info("playlists bellow will be crawled")
+        print_playlist(playlists)
 
         for pl_obj in playlists:
             playlist_detail = api.get_playlist_detail(pl_obj['id'])
@@ -148,17 +157,9 @@ class SpiderController(NXSpiderBaseController):
             album_details = [d for d in album_details if d]
             artist_detail['albums'] = album_details
 
-            from terminaltables import AsciiTable
-            table = AsciiTable([["ID", "Album", "Artist", "ArtistID"]])
-            table_data = [[str(item['id']), item['name'],
-                           ','.join([ar['name'] for ar in item['artists']]),
-                           ','.join([str(ar['id']) for ar in item['artists']]),
-                           ] for item in artist_detail['albums']]
-            table.table_data.extend(table_data)
-
             log.print_info(u"<{}>".format(artist_detail['name']))
             log.print_info("albums bellow will be crawled")
-            print(table.table)
+            print_albums(artist_detail['albums'])
 
             artist_album_mo.parse_model(artist_detail,
                                         download_type=download_type,
@@ -203,17 +204,100 @@ class SpiderController(NXSpiderBaseController):
 
         download_type = self.parse_download()
         user_id = self.app.pargs.user
-        playlists = api.user_playlist(user_id)
+        playlists = api.user_playlist(user_id,
+                                      offset=self.app.pargs.offset or 0,
+                                      limit=self.app.pargs.limit or 50)
 
-        from terminaltables import AsciiTable
-        table = AsciiTable([["ID", "Name", "User", "PlayCount"]])
-        table_data = [[str(item['id']), item['name'],
-                       item['creator']['nickname'],
-                       str(item['playCount']),
-                       ] for item in playlists]
-        table.table_data.extend(table_data)
         log.print_info("playlists bellow will be crawled")
-        print(table.table)
+        print_playlist(playlists)
+
+        for pl_obj in playlists:
+            playlist_detail = api.get_playlist_detail(pl_obj['id'])
+            if playlist_detail:
+                log.print_info(u"<{}> author：{}".format(
+                    playlist_detail['name'],
+                    playlist_detail['creator']['nickname'],
+                ))
+                playlist_mo.parse_model(playlist_detail,
+                                        download_type=download_type,
+                                        file_check=Config().get_file_check())
+        log.print_info("spider complete!~")
+        pass
+
+    @expose(
+        help="login and spider mv, usage: login-smv -lu <login user> -lp <login password>")
+    def login_smv(self):
+        from NXSpider.bin.models import no_rec_mv_mo
+
+        if self.param_check(['lu', 'lp'], sys._getframe().f_code.co_name) is False:
+            return
+
+        session = requests.session()
+        import hashlib
+        plaintext_pwd = self.app.pargs.lp
+        plaintext_pwd = plaintext_pwd.encode()
+        password = hashlib.md5(plaintext_pwd).hexdigest()
+        res = api.login(self.app.pargs.lu, password, session)
+        if res.get('code', 0) != 200:
+            log.print_err('login failed, msg: {}'.format(res.get('msg', "none")))
+            exit()
+
+        mvs = api.my_mvs(session)
+        mvs = [api.get_mv_detail(d['id']) for d in mvs]
+        mvs = [d for d in mvs if d]
+
+        for mv in mvs:
+            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
+                                     file_check=Config().get_file_check())
+
+        log.print_info("spider complete!~")
+
+        pass
+
+    @expose(
+        help="spider top mvs usage: stop-mv [-offset <offset>] [-limit <limit>]")
+    def stop_mvs(self):
+        from NXSpider.bin.models import no_rec_mv_mo
+
+        mvs = api.top_mvs(offset=self.app.pargs.offset or 0,
+                          limit=self.app.pargs.limit or 50)
+        mvs = [api.get_mv_detail(d['id']) for d in mvs]
+        mvs = [d for d in mvs if d]
+
+        for mv in mvs:
+            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
+                                     file_check=Config().get_file_check())
+
+        log.print_info("spider complete!~")
+
+        pass
+
+    @expose(
+        help="login and spider playlists, usage: login-spls -lu <login user> -lp <login password> [-dw <mv,mp3>]")
+    def login_spls(self):
+        if self.param_check(['lu', 'lp'], sys._getframe().f_code.co_name) is False:
+            return
+
+        from NXSpider.bin.models import playlist_mo
+
+        session = requests.session()
+        import hashlib
+        plaintext_pwd = self.app.pargs.lp
+        plaintext_pwd = plaintext_pwd.encode()
+        password = hashlib.md5(plaintext_pwd).hexdigest()
+        res = api.login(self.app.pargs.lu, password, session)
+        if res.get('code', 0) != 200:
+            log.print_err('login failed, msg: {}'.format(res.get('msg', "none")))
+            exit()
+
+        user_id = res['account']['id']
+        download_type = self.parse_download()
+        playlists = api.user_playlist(user_id,
+                                      offset=self.app.pargs.offset or 0,
+                                      limit=self.app.pargs.limit or 1000)
+
+        log.print_info("playlists bellow will be crawled")
+        print_playlist(playlists)
 
         for pl_obj in playlists:
             playlist_detail = api.get_playlist_detail(pl_obj['id'])

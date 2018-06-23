@@ -10,9 +10,19 @@ from cement.core.controller import expose
 from terminaltables import AsciiTable
 
 from NXSpider.bin.base_ctrl import NXSpiderBaseController, py2_decoding
+from NXSpider.bin.print_as_table import print_mp3s, print_playlist, print_users, print_albums, print_artists, print_mvs
 from NXSpider.common import PYTHON2, log
 from NXSpider.spider import api
 from NXSpider.spider.api import search_types, PLAYLIST_CLASSES
+
+PRINT_ATTR_FUNC_MAP = {
+    'mp3': ['songs', print_mp3s],
+    'playlist': ['playlists', print_playlist],
+    'user': ['userprofiles', print_users],
+    'artist': ['artists', print_artists],
+    'album': ['albums', print_albums],
+    'mv': ['mvs', print_mvs],
+}
 
 
 class ShowController(NXSpiderBaseController):
@@ -43,62 +53,12 @@ class ShowController(NXSpiderBaseController):
 
         if not res:
             log.print_info("nothing found!")
+            return
 
-        table = ''
-        if search_key == 'mp3' and 'songs' in res:
-            table = AsciiTable([["ID", "Name", "Album", "AlbumID", "Artist", "ArtistID"]])
-            table_data = [[str(item['id']), item['name'],
-                           item['album']['name'], item['album']['id'],
-                           ','.join([ar['name'] for ar in item['artists']]),
-                           ','.join([str(ar['id']) for ar in item['artists']]),
-                           ] for item in res['songs']]
-            table.table_data.extend(table_data)
-        elif search_key == 'playlist' and 'playlists' in res:
-            table = AsciiTable([["ID", "Name", "User", "PlayCount", "FavoriteCount"]])
-            table_data = [[str(item['id']), item['name'],
-                           item['creator']['nickname'],
-                           str(item['playCount']),
-                           str(item['bookCount']),
-                           ] for item in res['playlists']]
-            table.table_data.extend(table_data)
-            pass
-        elif search_key == 'user' and 'userprofiles' in res:
-            table = AsciiTable([["ID", "Name", "Signature"]])
-            table_data = [[str(item['userId']), item['nickname'],
-                           item['signature'],
-                           ] for item in res['userprofiles']]
-            table.table_data.extend(table_data)
-            pass
-        elif search_key == 'artist' and 'artists' in res:
-            table = AsciiTable([["ID", "Name", "AlbumNum", "MVNum"]])
-            table_data = [[str(item['id']), item['name'],
-                           str(item['albumSize']),
-                           str(item['mvSize'])
-                           ] for item in res['artists']]
-            table.table_data.extend(table_data)
-        elif search_key == 'album' and 'albums' in res:
-            table = AsciiTable([["ID", "Album", "Artist", "ArtistID"]])
-            table_data = [[str(item['id']), item['name'],
-                           ','.join([ar['name'] for ar in item['artists']]),
-                           ','.join([str(ar['id']) for ar in item['artists']]),
-                           ] for item in res['albums']]
-            table.table_data.extend(table_data)
-            pass
-        elif search_key == 'mv' and 'mvs' in res:
-            table = AsciiTable([["ID", "Name", "Artist", "ArtistID", "Duration", "PlayCount"]])
-            table_data = [[str(item['id']), item['name'],
-                           item['artistName'],
-                           item['artistId'],
-                           '%02d:%02d' % divmod(int(item['duration'] / 1000), 60),
-                           item['playCount'],
-                           ] for item in res['mvs']]
-            table.table_data.extend(table_data)
-            pass
-
-        if table == '':
-            log.print_err('nothing found')
-        else:
-            print(table.table)
+        if search_key in PRINT_ATTR_FUNC_MAP:
+            func = PRINT_ATTR_FUNC_MAP[search_key][1]   # type: function
+            value = (res.get(PRINT_ATTR_FUNC_MAP[search_key][0], []))   # type: list
+            func(value)
 
     @expose(help="show artists ablum, usage: sw-ar-ab -ar <artist_id> [-offset <offset>] [-limit <limit>]")
     def sw_ar_ab(self):
@@ -109,12 +69,8 @@ class ShowController(NXSpiderBaseController):
         artist_detail = api.get_artist_album(artistid,
                                              offset=self.app.pargs.offset or 0,
                                              limit=self.app.pargs.limit or 50)
-        table = AsciiTable([["ID", "Name", "Artist", "Song", "Company"]])
-        table_data = [[str(item['id']), item['name'],
-                       item['artist']['name'], item['size'], item['company']
-                       ] for item in artist_detail['hotAlbums']]
-        table.table_data.extend(table_data)
-        print(table.table)
+
+        print_albums(artist_detail['hotAlbums'])
         pass
 
     @expose(help="show user playlist, usage: sw-ur-pl -ur <user_id,id1,id2>")

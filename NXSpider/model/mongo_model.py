@@ -13,8 +13,6 @@ from pymongo.errors import ServerSelectionTimeoutError
 
 from NXSpider.common import log
 from NXSpider.common.config import Config
-from NXSpider.model.export import *
-
 mongodb_conf = Config().get_mongo()
 
 try:

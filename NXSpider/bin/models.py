@@ -62,10 +62,3 @@ artist_album_mo = Artist(
         'artists': no_rec_artist_mo,
     }
 )
-
-__all__ = [
-    'album_mo',
-    'artist_mo',
-    'playlist_mo',
-    'artist_album_mo',
-]

@@ -17,6 +17,7 @@ from NXSpider.bin.show_ctrl import ShowController
 from NXSpider.bin.spider_ctrl import SpiderController
 from NXSpider.common.config import Config
 
+
 BANNER = """
 {} Application v{}
 Copyright (c) {} {}

@@ -11,13 +11,11 @@ from inspect import isfunction
 
 import requests
 import six
-from mongoengine import DynamicDocument
 
 from NXSpider.common.config import Config
 from NXSpider.common import tools, log
 from NXSpider.utility.media_tag import attach_media_tag
 from NXSpider.model.export import *
-import NXSpider.model.export
 
 
 class Music163ObjException(Exception):
@@ -353,7 +351,7 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
         self.try_download(doc, download_type, file_check)
 
         # save document
-        if isinstance(doc, DynamicDocument) and save:
+        if save and callable(getattr(doc, 'save', None)):
             doc.save()
 
         if debug:
