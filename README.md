@@ -1,7 +1,7 @@
 NXSpider
 =================
 
-NXSpider，一个强大的（网易云音乐）mp3,mv爬虫，可以下载和收集mp3,mv信息,同时附带多媒体标签信息。采用python编写，mongo数据库(非必须)，递归算法核心实现
+NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫，可以下载和收集mp3,mv信息,同时附带多媒体标签信息。采用python编写，mongo数据库(非必须)，递归算法核心实现
 
 [![Software License](https://img.shields.io/pypi/l/Django.svg)](LICENSE.md)
 ![platform](https://img.shields.io/badge/python-2.7-green.svg)

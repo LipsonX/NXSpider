@@ -1,12 +1,13 @@
 NXSpider
 =================
 
-
-NXSpider，一个强大的（某云）mp3,mv爬虫，可以下载和收集mp3,mv信息,同事附带多媒体标签信息。采用python编写，mongo数据库，递归算法核心实现
+NXSpider, NetEase X Spider, A powerful for mp3,mv spider, can help you download mp3 and mv with media tags. Base on python, mongodb, and recursion algorithm
 
 [![Software License](https://img.shields.io/pypi/l/Django.svg)](LICENSE.md)
-[![platform](https://img.shields.io/badge/python-2.7-green.svg)]()
-[![platform](https://img.shields.io/badge/python-3.5-green.svg)]()
+![platform](https://img.shields.io/badge/python-2.7-green.svg)
+![platform](https://img.shields.io/badge/python-3.5-green.svg)
+
+[新手先看这里](SIMPLE_USE.md) | [历史版本在这里](VERSION.md) | [开发详情在这里](DEV.md)
 
 这里为非IT同学增加最简单使用方法（请保证电脑能上网），请根据以下流程。注意，所有跳转建议按住ctrl后再点击（或右键新窗口打开）
 

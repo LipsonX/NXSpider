@@ -1,14 +1,13 @@
 NXSpider
 =================
 
-
-#### Thanks for project MusicBox and spider163
-
-NXSpider, A powerful for mp3,mv spider, can help you download mp3 and mv with media tags. Base on python, mongodb, and recursion algorithm
+NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫，可以下载和收集mp3,mv信息,同时附带多媒体标签信息。采用python编写，mongo数据库(非必须)，递归算法核心实现
 
 [![Software License](https://img.shields.io/pypi/l/Django.svg)](LICENSE.md)
-[![platform](https://img.shields.io/badge/python-2.7-green.svg)]()
-[![platform](https://img.shields.io/badge/python-3.5-green.svg)]()
+![platform](https://img.shields.io/badge/python-2.7-green.svg)
+![platform](https://img.shields.io/badge/python-3.5-green.svg)
+
+[新手先看这里](SIMPLE_USE.md) | [历史版本在这里](VERSION.md) | [开发详情在这里](DEV.md)
 
 ## Update History
 
