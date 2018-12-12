@@ -5,7 +5,6 @@
 # email to LipsonChan@yahoo.com
 #
 import os
-from functools import reduce
 
 from mutagen import id3
 from mutagen.id3 import ID3
@@ -43,9 +42,9 @@ def attach_mp3_idv3(doc, file):
     :return:
     """
     artists = [('["%s",%d]' % (x['name'], x.id)) for x in doc.artists]
-    artists_str = reduce(lambda x, y: x + "," + y, artists)
+    artists_str = ",".join(artists)
 
-    authors = reduce(lambda x, y: x + ',' + y, [x['name'] for x in doc.artists])
+    authors = ",".join([x['name'] for x in doc.artists])
     data = {
         'title': doc['name'],
         'artist': authors,
@@ -90,7 +89,7 @@ def attach_mp4_tag(doc, file):
     :param file:
     :return:
     """
-    authors = reduce(lambda x, y: x + u',' + y, [x['name'] for x in doc.artists])
+    authors = u",".join([x['name'] for x in doc.artists])
     data = {
         'title': doc['name'],
         'artist': authors,

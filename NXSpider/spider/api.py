@@ -175,9 +175,26 @@ def get_mv_link(mv_id, r):
         return res['data']['url']
 
 
+def get_video_link(id, r):
+    data = {'id': id, 'r': r, 'csrf_token': 'csrf'}
+    url = "/weapi/cloudvideo/playurl"
+
+    res = api_request(url, data)
+    if res and res['code'] == 200:
+        return res['urls'][0]['url']
+
+
 def get_mv_detail(mv_id):
     data = {'id': mv_id, 'csrf_token': 'csrf'}
     url = "/weapi/v1/mv/detail"
+
+    res = api_request(url, data)
+    return res.get('data', None)
+
+
+def get_video_detail(id):
+    data = {'id': id, 'csrf_token': 'csrf'}
+    url = "/weapi/cloudvideo/v1/video/detail"
 
     res = api_request(url, data)
     return res.get('data', None)
@@ -307,6 +324,17 @@ def my_subcount(session):
 
 def my_mvs(session):
     action = '/weapi/mv/sublist'
+    data = dict(
+        offset=0,
+        limit=1000,
+    )
+    res = api_request(action, data=data, session=session)
+
+    return res.get('data', [])
+
+
+def my_video(session):
+    action = '/weapi/cloudvideo/allvideo/sublist'
     data = dict(
         offset=0,
         limit=1000,

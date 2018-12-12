@@ -370,6 +370,7 @@ __all__ = [
     'AlbumModel',
     'PlaylistModel',
     'Mp4Model',
+    'VideoModel',
     'ArtistModel',
     'Mp3Model',
     'AuthorModel',
