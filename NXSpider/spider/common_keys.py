@@ -33,10 +33,17 @@ def create_params_by_dict(obj):
 def create_params_text(text):
     nonce = '0CoJUm6Qyw8W8jud'
     nonce2 = 16 * 'F'
-    encText = encrypt.aes(
-        encrypt.aes(text, nonce).decode("utf-8"), nonce2
-    )
+    encText0 = encrypt.aes(text, nonce).decode("utf-8")
+    encText = encrypt.aes(encText0, nonce2)
     return encText
+
+
+def decrpyt_params(text):
+    nonce = '0CoJUm6Qyw8W8jud'
+    nonce2 = 16 * 'F'
+    decText0 = encrypt.aes_decode(text, nonce2)
+    decText = encrypt.aes_decode(decText0, nonce)
+    return decText
 
 
 def rsa_encrypt(text, pubKey, modulus):
