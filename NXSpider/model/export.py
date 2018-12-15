@@ -14,6 +14,7 @@ else:
 
 model_download_url = 'download_url'
 model_is_download = 'downloaded'
+model_download_path = 'download_path'
 
 __all__ = [
     'ConfigModel',

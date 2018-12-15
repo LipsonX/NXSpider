@@ -45,6 +45,7 @@ class Config(Singleton):
             'download_file_check': True,
             'debug_log': True,
             'no_mongo': True,
+            'shortcut': False,
         }
         self.config = {}
 
@@ -85,6 +86,9 @@ class Config(Singleton):
         f = open(self.config_file_path, 'w')
         utf8_data_to_file(f, json.dumps(self.config, indent=2))
         f.close()
+
+    def get_shortcut(self):
+        return self.config['shortcut']
 
     def get_mongo(self):
         return self.config['mongo']

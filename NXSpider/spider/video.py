@@ -27,7 +27,7 @@ class Video(Music163Obj):
         'artists': Artist(),
     }
 
-    def download_filename_format(self, doc):
+    def download_filename_full(self, doc):
         """
         implement pls
         get a path to save file, by relative path

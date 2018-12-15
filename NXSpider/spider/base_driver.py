@@ -14,6 +14,7 @@ import six
 
 from NXSpider.common.config import Config
 from NXSpider.common import tools, log
+from NXSpider.model.export import model_download_path
 from NXSpider.utility.media_tag import attach_media_tag
 from NXSpider.model.export import *
 
@@ -109,7 +110,18 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
             if k in ['__parse_recursion__', '__model_rfilter__']:
                 setattr(self, k, v)
 
-    def download_filename_format(self, doc):
+    def download_filename(self, doc):
+        """
+        implement pls
+        get a name to save file
+        need be complete by child
+        :param doc:
+        :return:
+        :rtype: str
+        """
+        return None
+
+    def download_filename_full(self, doc):
         """
         implement pls
         get a path to save file, by relative path
@@ -140,7 +152,27 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
         """
         pass
 
-    def request_file(self, doc):
+    def shortcut_relative_name(self, doc):
+        """
+        implement pls, not force
+        return short cut relative path
+        :param doc:
+        :return:
+        """
+        pass
+
+    def shortcut_self_path(self, doc):
+        """
+        implement pls, not force
+        return self short cut path
+        :param doc:
+        :return:
+        :rtype: list[str]
+        """
+        return []
+
+    @staticmethod
+    def request_file(doc):
         """
         implement pls
         :param doc:
@@ -164,7 +196,7 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
     def download_relative_path(self, doc):
         download_file_name = 'download_file_name'
         if download_file_name not in doc:
-            doc[download_file_name] = self.download_filename_format(doc)
+            doc[download_file_name] = self.download_filename_full(doc)
         filename = doc[download_file_name]
         if filename:
             return os.path.join(self.__file_type__, filename)
@@ -183,15 +215,47 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
             for path in Config().get_paths():
                 file_path = os.path.join(path, file_relative_path)
                 if os.path.exists(file_path):
-                    self.download_log(doc)
+                    self.download_log(doc, download_path=file_path)
                     return file_path
             self.download_log(doc, downloaded=False)
             return False
 
         return hasattr(doc, model_is_download) and doc[model_is_download]
 
-    def download_log(self, doc, downloaded=True):
+    def create_shortcut(self, doc, shortcuts_stack):
+        """
+        :param doc:
+        :param shortcuts_stack:
+        :type shortcuts_stack: list[str]
+        :return:
+        """
+        from NXSpider.utility.shortcut import symlink
+        if not (hasattr(doc, model_is_download) and doc[model_is_download]
+                and os.path.exists(doc[model_download_path])
+                and self.download_filename(doc)):
+            return
+
+        file_path = doc[model_download_path]
+        shortcut_root = os.path.join(Config().get_path(), 'shortcuts')
+        file_name = self.download_filename(doc)
+        if file_path and file_path is not True:
+            if shortcuts_stack:
+                path = os.path.join(shortcut_root, *shortcuts_stack)
+                os.makedirs(path, exist_ok=True)
+                target = os.path.join(path, file_name)
+                symlink(file_path, os.path.join(shortcut_root, target))
+
+            for k in self.shortcut_self_path(doc):
+                path = os.path.join(shortcut_root, k)
+                os.makedirs(path, exist_ok=True)
+                target = os.path.join(path, file_name)
+                symlink(file_path, os.path.join(shortcut_root, target))
+        pass
+
+    @staticmethod
+    def download_log(doc, downloaded=True, download_path=""):
         doc[model_is_download] = downloaded
+        doc[model_download_path] = download_path
 
     def download_file_tag(self, filename, doc):
         if self.__file_type__ in ['mp3', 'mp4', 'mv'] \
@@ -250,9 +314,6 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
 
         log.print_info(msg)
 
-    def parse_new_model(self, doc, obj):
-        pass
-
     def try_download(self, doc, download_type, file_check):
         if self.__file_type__ not in download_type:
             return True
@@ -275,7 +336,8 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
                                % name)
 
     def parse_model(self, crawl_dict, download_type=None,
-                    file_check=False, save=True, debug=False):
+                    file_check=False, save=True, debug=False,
+                    shortcuts_stack=None):
         """
         Get a model from db or create, update and save!!!
         this will replace some attributes into models by load_save_model also.
@@ -285,7 +347,9 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
         :param download_type:
         :param save: save doc
         :param crawl_dict: must have id attr
+        :param shortcuts_stack: stack of shortcuts path
         :type crawl_dict: dict
+        :type shortcuts_stack: list[str]
         :return:
         :rtype: DynamicDocument
         :type save: bool
@@ -306,6 +370,10 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
             log.print_err(u"can not load a doc by obj %s_%d"
                           % (self.__file_type__, doc_id))
             return None
+
+        # shortcuts in stack
+        if shortcuts_stack is not None and isinstance(shortcuts_stack, list):
+            shortcuts_stack.append(self.__file_type__)
 
         # if is_new_doc:
         # replace attr or ignore
@@ -336,10 +404,13 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
 
             if isinstance(obj[k], list):
                 obj[k] = [v.parse_model(x, save=save, download_type=download_type,
-                                        file_check=file_check, debug=debug) for x in obj[k]]
+                                        file_check=file_check, debug=debug,
+                                        shortcuts_stack=shortcuts_stack)
+                          for x in obj[k]]
             elif isinstance(obj[k], dict):
                 obj[k] = v.parse_model(obj[k], save=save, download_type=download_type,
-                                       file_check=file_check, debug=debug)
+                                       file_check=file_check, debug=debug,
+                                       shortcuts_stack=shortcuts_stack)
 
         # update json to doc, this must be after recursion
         update_dynamic_doc(doc, obj)
@@ -349,6 +420,10 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
 
         # try download
         self.try_download(doc, download_type, file_check)
+
+        if shortcuts_stack:
+            shortcuts_stack.pop()
+            self.create_shortcut(doc, shortcuts_stack)
 
         # save document
         if save and callable(getattr(doc, 'save', None)):

@@ -1,0 +1,1 @@
+readme modify(add shortcut and add password)
