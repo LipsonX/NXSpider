@@ -36,13 +36,13 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "mutagen",
-        "terminaltables",
-        "cryptography",
-        "requests",
-        "colorama",
-        "cement",
-        "six",
+        "mutagen>=1.40,<2",
+        "terminaltables>=3,<4",
+        "cryptography>=2.2,<3",
+        "requests>=2.19,<3",
+        "colorama>=0.3,<0.4",
+        "cement>=2,<3",
+        "six>=1,<=2",
     ],
     entry_points={
         "console_scripts": ["nxspider=NXSpider.bin.cli:main"]

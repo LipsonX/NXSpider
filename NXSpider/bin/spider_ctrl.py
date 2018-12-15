@@ -48,6 +48,26 @@ class SpiderController(NXSpiderBaseController):
              dict(help="login password")),
         ]
 
+    @expose(help="spider mp3, usage: smp3 -mp3 <mp3_id,id1,id2> [-dw <mv,mp3>]")
+    def smp3s(self):
+        from NXSpider.bin.models import dw_mp3_mo
+
+        if self.param_check(['mp3'], sys._getframe().f_code.co_name) is False:
+            return
+
+        download_type = self.parse_download()
+        mp3s = self.app.pargs.mp3.split(',')  # type: list
+        details = api.get_mp3_details(mp3s)
+
+        for mid, detail in details.items():
+            log.print_info(u"<{}>".format(detail['name']))
+            dw_mp3_mo.parse_model(detail,
+                                  download_type=download_type,
+                                  file_check=Config().get_file_check())
+
+        log.print_info("spider complete!~")
+        pass
+
     @expose(help="spider playlist, usage: spls -pl <playlist_id,id2,id3> [-dw <mv,mp3>] ")
     def spls(self):
         from NXSpider.bin.models import playlist_mo

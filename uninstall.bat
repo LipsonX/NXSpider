@@ -10,6 +10,4 @@ goto start
 
 :start
 
-pip uninstall nxspider -y
 python setup.py install
-pause
