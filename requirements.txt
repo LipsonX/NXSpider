@@ -1,8 +1,8 @@
-six
-cement
-mutagen
-terminaltables
-cryptography
-mongoengine
-requests
-colorama
+six>=1,<=2
+cement>=2,<3
+mutagen>=1.40,<2
+terminaltables>=3,<4
+cryptography>=2.2,<3
+mongoengine>=0.15,<1
+requests>=2.19,<3
+colorama>=0.3,<0.4

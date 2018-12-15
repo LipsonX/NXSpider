@@ -220,6 +220,13 @@ class Mp4Model(DynamicDocument):
     pass
 
 
+class VideoModel(DynamicDocument):
+    id = StringField(primary_key=True)
+    artists = ListField(ReferenceField(ArtistModel))
+    updated_at = DateTimeField(default=datetime.utcnow)
+    pass
+
+
 class PlaylistModel(DynamicDocument):
     id = LongField(primary_key=True)
     mp3s = ListField(LazyReferenceField(Mp3Model))
@@ -251,6 +258,7 @@ def update_timestamp(sender, document, **kwargs):
 
 
 signals.pre_save.connect(update_timestamp, sender=PlaylistModel)
+signals.pre_save.connect(update_timestamp, sender=VideoModel)
 signals.pre_save.connect(update_timestamp, sender=Mp4Model)
 signals.pre_save.connect(update_timestamp, sender=Mp3Model)
 signals.pre_save.connect(update_timestamp, sender=AuthorModel)

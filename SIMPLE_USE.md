@@ -23,6 +23,10 @@ NXSpider, NetEase X Spider, A powerful for mp3,mv spider, can help you download 
 
 ## Windows用户
 
+### 建议
+- 使用python3.6，最好卸载2.7
+- 所有路径（python安装路径，NXSpider路径，下载路径）不要有中文名，空格希望也不要有
+
 ### 下载python3(自行跳过)
 - [点击这里下载(32)](https://www.python.org/ftp/python/3.6.5/python-3.6.5.exe) 或 [点击这里下载(64)](https://www.python.org/ftp/python/3.6.5/python-3.6.5-amd64.exe) 或 [自行选择](https://www.python.org/downloads/release/python-365/)
 - 双击你下载的文件，进行安装，跟正常安装软件一样
@@ -31,7 +35,7 @@ NXSpider, NetEase X Spider, A powerful for mp3,mv spider, can help you download 
 - **强烈要求**大概在第二页勾选 ```Add Python to environment variables```
 ![img](img/python_install_2.png)
 - 后面一直按继续即可
-- 安装完毕后按住键盘 ```ctrl+r``` 在开始建附近会弹出个运行框，输入 ```cmd``` 回车
+- 安装完毕后按住键盘 ```win+r``` 在开始建附近会弹出个运行框，输入 ```cmd``` 回车
 ![img](img/cmd.png)
 - 回车后会弹出个黑色界面，通常我们叫 console(控制台)，输入 ```python``` 并回车
 - 看到以下界面则为安装成功
@@ -49,10 +53,13 @@ NXSpider, NetEase X Spider, A powerful for mp3,mv spider, can help you download 
 3. 先配置你的下载目录，比如目录是 ```G:/media```, 则输入并回车 ```nxspider config-spider -path G:/media```
 4. **推荐**打开你的网易云音乐，点击:本地音乐 -> 选择目录 -> 添加文件夹 -> 选择你的目录 -> 确定
 
-### 通过搜索下载歌神某专辑示例
-    $ nxspider search -ar 张学友
+### 通过搜索下载示例
+    $ nxspider search -ar "张学友"
     $ nxspider sab -ab 19093 -dw mp3,mv 
     # -dw mp3,mv表示想要下载mp3和mv，不想下载mv则删除最后的,mv
+    
+    $ nxspider search -mp3 "爱我别走"
+    $ nxspider smp3s -mp3 187947 -dw mp3
     
 搜索歌神唱片找到ID：
 

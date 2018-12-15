@@ -28,6 +28,19 @@ def aes(text, sec_key):
     return ciphertext
 
 
+def aes_decode(text, sec_key):
+    backend = default_backend()
+    ciphertext = base64.b64decode(text)
+    cipher = Cipher(
+        algorithms.AES(sec_key.encode('utf-8')),
+        modes.CBC(b'0102030405060708'),
+        backend=backend
+    )
+    decryptor = cipher.decryptor()
+    plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+    return plaintext
+
+
 def aes_ecb_decode(text, sec_key):
     backend = default_backend()
     ciphertext = base64.b64decode(text)

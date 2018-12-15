@@ -2,7 +2,7 @@
 
 goto start
 
-# created by Lipson on 2018/6/5.
+# created by Lipson on 2018/12/15.
 # email to LipsonChan@yahoo.com
 #
 # this script will set current path as a pythonpath, and run python
@@ -10,6 +10,5 @@ goto start
 
 :start
 
-pip uninstall nxspider -y
-python setup.py install
+pip install -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com -r requirements.txt
 pause

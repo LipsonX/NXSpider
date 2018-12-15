@@ -63,6 +63,10 @@ class Mp4Model(BaseDoc):
     pass
 
 
+class VideoModel(BaseDoc):
+    pass
+
+
 class PlaylistModel(BaseDoc):
     pass
 

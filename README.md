@@ -45,8 +45,8 @@ NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫�
 	# 显示软件版本信息
 
 ### 配置, <>内容为值，or为可选
-	$ nxspider config-spider -path <you_download_path,default>
-	# 强烈建议第一次前进行配置
+	$ nxspider config-spider -path "<you_download_path,default>"
+	# 强烈建议第一次前进行配置,强烈建议加上双引号保证空格等问题
 	# 配置下载文件的路径，第一个路径为存储路径，其他路径会检查文件是否下载 
 
 	$ nxspider config-mongo -mh <host> -mp <port> -mn <db name>
@@ -56,18 +56,21 @@ NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫�
 	# 检查配置内容
 
 ### 搜索命令
-	# 以下为搜索命令，其中<>内文具体的文字内容，可以输入中文，韩文，日语等
-	$ nxspider search -ar <artist> [-offset <offset>] [-limit <limit>]
-	$ nxspider search -pl <playlist> [-offset <offset>] [-limit <limit>]
-	$ nxspider search -ur <user> [-offset <offset>] [-limit <limit>]
-	$ nxspider search -mp3 <song> [-offset <offset>] [-limit <limit>]
-	$ nxspider search -ab <album> [-offset <offset>] [-limit <limit>]
-	$ nxspider search -mv <mv> [-offset <offset>] [-limit <limit>]
+	# 以下为搜索命令，其中<>内文具体的文字内容，可以输入中文，韩文，日语等(注意加上双引号)
+	$ nxspider search -ar "<artist>" [-offset <offset>] [-limit <limit>]
+	$ nxspider search -pl "<playlist>" [-offset <offset>] [-limit <limit>]
+	$ nxspider search -ur "<user>" [-offset <offset>] [-limit <limit>]
+	$ nxspider search -mp3 "<song>" [-offset <offset>] [-limit <limit>]
+	$ nxspider search -ab "<album>" [-offset <offset>] [-limit <limit>]
+	$ nxspider search -mv "<mv>" [-offset <offset>] [-limit <limit>]
 
 ### 爬取命令
 	$ nxspider sab -ab <album_id,id1,id2> [-dw <mv,mp3>]
     $ nxspider sab -ab 3084625,3107072 -dw mv,mp3
 	# 根据专辑id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置)
+
+    $ nxspider smp3s -mp3 <mp3_id,id2,id3> [-dw <mv,mp3>]
+	# 根据歌曲id(按逗号隔开)爬取歌曲
 
 	$ nxspider spls -pl <playlist_id,id2,id3> [-dw <mv,mp3>]
 	# 根据歌单id(按逗号隔开)爬取歌曲
