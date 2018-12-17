@@ -6,7 +6,7 @@
 #
 
 __title__ = 'NXSpider'
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 __description__ = 'NetEase X Spider, help u to have a better life!!!'
 __url__ = 'https://github.com/Grass-CLP/NXSpider'
 __author__ = 'LipsonChan'
