@@ -77,5 +77,6 @@ class MV(Music163Obj):
         :return:
         """
         result = []
-        result.extend([os.path.join("artist", x['name']) for x in doc.artists])
+        result.extend([os.path.join("artist", re.sub("[\\\\/:*?\"<>|]", '', x['name']))
+                       for x in doc.artists])
         return result

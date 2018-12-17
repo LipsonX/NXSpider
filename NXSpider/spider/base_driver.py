@@ -158,6 +158,7 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
         return short cut relative path
         :param doc:
         :return:
+        :rtype: str
         """
         pass
 
@@ -231,6 +232,7 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
         """
         from NXSpider.utility.shortcut import symlink
         if not (hasattr(doc, model_is_download) and doc[model_is_download]
+                and hasattr(doc, model_download_path)
                 and os.path.exists(doc[model_download_path])
                 and self.download_filename(doc)):
             return
@@ -372,8 +374,9 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
             return None
 
         # shortcuts in stack
-        if shortcuts_stack is not None and isinstance(shortcuts_stack, list):
-            shortcuts_stack.append(self.__file_type__)
+        if shortcuts_stack is not None and isinstance(shortcuts_stack, list) \
+                and self.shortcut_relative_name(doc):
+            shortcuts_stack.append(self.shortcut_relative_name(doc))
 
         # if is_new_doc:
         # replace attr or ignore
@@ -422,7 +425,8 @@ class Music163Obj(six.with_metaclass(Music163ObjMetaClass)):
         self.try_download(doc, download_type, file_check)
 
         if shortcuts_stack:
-            shortcuts_stack.pop()
+            if self.shortcut_relative_name(doc):
+                shortcuts_stack.pop()
             self.create_shortcut(doc, shortcuts_stack)
 
         # save document

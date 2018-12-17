@@ -254,6 +254,25 @@ class SpiderController(NXSpiderBaseController):
         pass
 
     @expose(
+        help="spider top mvs usage: stop-mv [-offset <offset>] [-limit <limit>]")
+    def stop_mvs(self):
+        from NXSpider.bin.models import no_rec_mv_mo
+
+        mvs = api.top_mvs(offset=self.app.pargs.offset or 0,
+                          limit=self.app.pargs.limit or 50)
+        mvs = [api.get_mv_detail(d['id']) for d in mvs]
+        mvs = [d for d in mvs if d]
+
+        for mv in mvs:
+            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
+                                     file_check=Config().get_file_check(),
+                                     shortcuts_stack=[] if Config().get_shortcut() else None)
+
+        log.print_info("spider complete!~")
+
+        pass
+
+    @expose(
         help="login and spider mv, usage: login-smv -lu <login user> [-lp <login password>]")
     def login_smv(self):
         from NXSpider.bin.models import no_rec_mv_mo
@@ -275,25 +294,6 @@ class SpiderController(NXSpiderBaseController):
             exit()
 
         mvs = api.my_mvs(session)
-        mvs = [api.get_mv_detail(d['id']) for d in mvs]
-        mvs = [d for d in mvs if d]
-
-        for mv in mvs:
-            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
-                                     file_check=Config().get_file_check(),
-                                     shortcuts_stack=[] if Config().get_shortcut() else None)
-
-        log.print_info("spider complete!~")
-
-        pass
-
-    @expose(
-        help="spider top mvs usage: stop-mv [-offset <offset>] [-limit <limit>]")
-    def stop_mvs(self):
-        from NXSpider.bin.models import no_rec_mv_mo
-
-        mvs = api.top_mvs(offset=self.app.pargs.offset or 0,
-                          limit=self.app.pargs.limit or 50)
         mvs = [api.get_mv_detail(d['id']) for d in mvs]
         mvs = [d for d in mvs if d]
 

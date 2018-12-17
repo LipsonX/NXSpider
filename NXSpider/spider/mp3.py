@@ -96,6 +96,7 @@ class Mp3(Music163Obj):
         :return:
         """
         result = []
-        result.extend([os.path.join("artist", x['name']) for x in doc.artists])
-        result.append(os.path.join("album",doc.album['name']))
+        result.extend([os.path.join("artist", re.sub("[\\\\/:*?\"<>|]", '', x['name']))
+                       for x in doc.artists])
+        result.append(os.path.join("album", re.sub("[\\\\/:*?\"<>|]", '', doc.album['name'])))
         return result
