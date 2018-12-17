@@ -26,7 +26,21 @@ class MV(Music163Obj):
         'artists': Artist(),
     }
 
-    def download_filename_format(self, doc):
+    def download_filename(self, doc):
+        """
+        implement pls
+        get a name to save file
+        need be complete by child
+        :param doc:
+        :return:
+        """
+        authors = ",".join([x['name'] for x in doc.artists])
+        author = re.sub("[\\\\/:*?\"<>|]", '', authors.strip())
+        mv_name = re.sub("[\\\\/:*?\"<>|]", '', doc['name'])
+        name = "%s - %s.mp4" % (author, mv_name)
+        return name
+
+    def download_filename_full(self, doc):
         """
         implement pls
         get a path to save file, by relative path
@@ -35,10 +49,10 @@ class MV(Music163Obj):
         :return:
         :rtype: str
         """
-        authors = authors = ",".join([x['name'] for x in doc.artists])
+        authors = ",".join([x['name'] for x in doc.artists])
         author = re.sub("[\\\\/:*?\"<>|]", '', authors.strip())
-        mp3_name = re.sub("[\\\\/:*?\"<>|]", '', doc['name'])
-        name = os.path.join(author, "%s - %s.mp4" % (author, mp3_name))
+        mv_name = re.sub("[\\\\/:*?\"<>|]", '', doc['name'])
+        name = os.path.join(author, "%s - %s.mp4" % (author, mv_name))
         return name
 
     def url_load(self, doc):
@@ -54,3 +68,15 @@ class MV(Music163Obj):
             return get_mv_link(doc['id'], target_r)
         except:
             return None
+
+    def shortcut_self_path(self, doc):
+        """
+        implement pls, not force
+        return self short cut path
+        :param doc:
+        :return:
+        """
+        result = []
+        result.extend([os.path.join("artist", re.sub("[\\\\/:*?\"<>|]", '', x['name']))
+                       for x in doc.artists])
+        return result

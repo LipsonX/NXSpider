@@ -45,7 +45,21 @@ class Mp3(Music163Obj):
         if getattr(doc, 'album', False) and getattr(doc['album'], 'artists', False):
             doc.artists = [a for a in doc['album']['artists']]
 
-    def download_filename_format(self, doc):
+    def download_filename(self, doc):
+        """
+        implement pls
+        get a name to save file
+        need be complete by child
+        :param doc:
+        :return:
+        """
+        authors = ','.join([x['name'] for x in doc.artists])
+        author = re.sub("[\\\\/:*?\"<>|]", '', authors.strip())
+        mp3_name = re.sub("[\\\\/:*?\"<>|]", '', doc['name'])
+        name = "%s - %s.mp3" % (author, mp3_name)
+        return name
+
+    def download_filename_full(self, doc):
         """
         implement pls
         get a path to save file, by relative path
@@ -73,3 +87,16 @@ class Mp3(Music163Obj):
             return get_mp3_link(doc['id'])
         except:
             return None
+
+    def shortcut_self_path(self, doc):
+        """
+        implement pls, not force
+        return self short cut path
+        :param doc:
+        :return:
+        """
+        result = []
+        result.extend([os.path.join("artist", re.sub("[\\\\/:*?\"<>|]", '', x['name']))
+                       for x in doc.artists])
+        result.append(os.path.join("album", re.sub("[\\\\/:*?\"<>|]", '', doc.album['name'])))
+        return result

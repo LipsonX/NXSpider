@@ -1,5 +1,3 @@
-@ECHO OFF
-
 goto start
 
 # created by Lipson on 2018/6/5.
@@ -9,4 +7,4 @@ goto start
 # usage :
 
 :start
-start
+start /d %~dp0

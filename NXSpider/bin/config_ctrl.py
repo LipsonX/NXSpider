@@ -37,6 +37,8 @@ class ConfigController(CementBaseController):
              dict(help="download path, default ~/.nxspider/download_files/, eg. -path defualt;path1;path2")),
             (['-mvr', '--mv_resolution'],
              dict(help="mv default resolution, [240, 480, 720, 1080] default 720")),
+            (['-stt', '--shortcut'],
+             dict(help="build shortcuts, true(1) or false(0), default False")),
             (['-tag', '--media_tag'],
              dict(help="media tag, true(1) or false(0), default True")),
             (['-tag163', '--media_tag_163'],
@@ -88,7 +90,7 @@ class ConfigController(CementBaseController):
 
     @expose(help="config spider behavior with [-path <defualt,path1,path2>]"
                  "[-mvr <240,480,720,1080>] [-tag <1 or 0>] [-tag163 <1 or 0>]"
-                 "[-dfc <1 or 0>]")
+                 "[-dfc <1 or 0>] [-stt <1 or 0>]")
     def config_spider(self):
         config = Config()
         config_dict = config.config  # type: dict
@@ -136,6 +138,12 @@ class ConfigController(CementBaseController):
                 config_dict['media_tag_163'] = True if self.app.pargs.media_tag_163.lower() == 'true' \
                                                        or self.app.pargs.media_tag_163 == '1' else False
                 is_config = True
+
+            if self.app.pargs.shortcut is not None:
+                config_dict['shortcut'] = True if self.app.pargs.shortcut.lower() == 'true' \
+                                                       or self.app.pargs.shortcut == '1' else False
+                is_config = True
+
 
         except:
             log.print_err("input error, pls check")

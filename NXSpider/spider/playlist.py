@@ -4,6 +4,7 @@
 # created by Lipson on 2018/4/20.
 # email to LipsonChan@yahoo.com
 #
+import os
 
 from NXSpider.spider.mp3 import Mp3
 from NXSpider.spider.base_driver import *
@@ -31,3 +32,12 @@ class Playlist(Music163Obj):
         if 'userId' in obj and 'id' not in obj:
             obj['id'] = obj['userId']
         return obj
+
+    def shortcut_relative_name(self, doc):
+        """
+        implement pls, not force
+        return short cut relative path
+        :param doc:
+        :return:
+        """
+        return os.path.join(self.__file_type__, doc['name'])

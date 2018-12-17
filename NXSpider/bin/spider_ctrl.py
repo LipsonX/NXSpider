@@ -63,7 +63,8 @@ class SpiderController(NXSpiderBaseController):
             log.print_info(u"<{}>".format(detail['name']))
             dw_mp3_mo.parse_model(detail,
                                   download_type=download_type,
-                                  file_check=Config().get_file_check())
+                                  file_check=Config().get_file_check(),
+                                  shortcuts_stack=[] if Config().get_shortcut() else None)
 
         log.print_info("spider complete!~")
         pass
@@ -87,13 +88,15 @@ class SpiderController(NXSpiderBaseController):
                 ))
                 playlist_mo.parse_model(playlist_detail,
                                         download_type=download_type,
-                                        file_check=Config().get_file_check())
+                                        file_check=Config().get_file_check(),
+                                        shortcuts_stack=[] if Config().get_shortcut() else None)
 
         log.print_info("spider complete!~")
         pass
 
     @expose(
-        help="spider playlist, usage: scls-pls -cls <class name> [-dw <mv,mp3>] [-offset <offset>] [-limit <limit>]")
+        help="spider playlist of a classes, usage: scls-pls -cls <class name> "
+             "[-dw <mv,mp3>] [-offset <offset>] [-limit <limit>]")
     def scls_pls(self):
         from NXSpider.bin.models import playlist_mo
 
@@ -124,7 +127,8 @@ class SpiderController(NXSpiderBaseController):
                 ))
                 playlist_mo.parse_model(playlist_detail,
                                         download_type=download_type,
-                                        file_check=Config().get_file_check())
+                                        file_check=Config().get_file_check(),
+                                        shortcuts_stack=[] if Config().get_shortcut() else None)
         log.print_info("spider complete!~")
         pass
 
@@ -149,7 +153,8 @@ class SpiderController(NXSpiderBaseController):
             log.print_info(u"<{}>".format(artist_detail['name']))
             artist_mo.parse_model(artist_detail,
                                   download_type=download_type,
-                                  file_check=Config().get_file_check())
+                                  file_check=Config().get_file_check(),
+                                  shortcuts_stack=[] if Config().get_shortcut() else None)
 
         log.print_info("spider complete!~")
         pass
@@ -183,7 +188,8 @@ class SpiderController(NXSpiderBaseController):
 
             artist_album_mo.parse_model(artist_detail,
                                         download_type=download_type,
-                                        file_check=Config().get_file_check())
+                                        file_check=Config().get_file_check(),
+                                        shortcuts_stack=[] if Config().get_shortcut() else None)
 
         log.print_info("spider complete!~")
         pass
@@ -209,13 +215,15 @@ class SpiderController(NXSpiderBaseController):
             ))
             album_mo.parse_model(album_detail,
                                  download_type=download_type,
-                                 file_check=Config().get_file_check())
+                                 file_check=Config().get_file_check(),
+                                 shortcuts_stack=[] if Config().get_shortcut() else None)
 
         log.print_info("spider complete!~")
         pass
 
     @expose(
-        help="spider playlist, usage: sur-pls -ur <user id,id1,id2> [-dw <mv,mp3>] [-offset <offset>] [-limit <limit>]")
+        help="spider a user's playlists, usage: sur-pls -ur <user id,id1,id2> "
+             "[-dw <mv,mp3>] [-offset <offset>] [-limit <limit>]")
     def sur_pls(self):
         from NXSpider.bin.models import playlist_mo
 
@@ -240,38 +248,9 @@ class SpiderController(NXSpiderBaseController):
                 ))
                 playlist_mo.parse_model(playlist_detail,
                                         download_type=download_type,
-                                        file_check=Config().get_file_check())
+                                        file_check=Config().get_file_check(),
+                                        shortcuts_stack=[] if Config().get_shortcut() else None)
         log.print_info("spider complete!~")
-        pass
-
-    @expose(
-        help="login and spider mv, usage: login-smv -lu <login user> -lp <login password>")
-    def login_smv(self):
-        from NXSpider.bin.models import no_rec_mv_mo
-
-        if self.param_check(['lu', 'lp'], sys._getframe().f_code.co_name) is False:
-            return
-
-        session = requests.session()
-        import hashlib
-        plaintext_pwd = self.app.pargs.lp
-        plaintext_pwd = plaintext_pwd.encode()
-        password = hashlib.md5(plaintext_pwd).hexdigest()
-        res = api.login(self.app.pargs.lu, password, session)
-        if res.get('code', 0) != 200:
-            log.print_err('login failed, msg: {}'.format(res.get('msg', "none")))
-            exit()
-
-        mvs = api.my_mvs(session)
-        mvs = [api.get_mv_detail(d['id']) for d in mvs]
-        mvs = [d for d in mvs if d]
-
-        for mv in mvs:
-            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
-                                     file_check=Config().get_file_check())
-
-        log.print_info("spider complete!~")
-
         pass
 
     @expose(
@@ -286,24 +265,62 @@ class SpiderController(NXSpiderBaseController):
 
         for mv in mvs:
             no_rec_mv_mo.parse_model(mv, download_type=['mv'],
-                                     file_check=Config().get_file_check())
+                                     file_check=Config().get_file_check(),
+                                     shortcuts_stack=[] if Config().get_shortcut() else None)
 
         log.print_info("spider complete!~")
 
         pass
 
     @expose(
-        help="login and spider playlists, usage: login-spls -lu <login user> -lp <login password> [-dw <mv,mp3>]")
+        help="login and spider mv, usage: login-smv -lu <login user> [-lp <login password>]")
+    def login_smv(self):
+        from NXSpider.bin.models import no_rec_mv_mo
+
+        if self.param_check(['lu'], sys._getframe().f_code.co_name) is False:
+            return
+
+        plaintext_pwd = self.app.pargs.lp or None
+        if plaintext_pwd is None:
+            import getpass
+            plaintext_pwd = getpass.getpass("Please input your password:")
+
+        session = requests.session()
+        import hashlib
+        password = hashlib.md5(plaintext_pwd).hexdigest()
+        res = api.login(self.app.pargs.lu, password, session)
+        if res.get('code', 0) != 200:
+            log.print_err('login failed, msg: {}'.format(res.get('msg', "none")))
+            exit()
+
+        mvs = api.my_mvs(session)
+        mvs = [api.get_mv_detail(d['id']) for d in mvs]
+        mvs = [d for d in mvs if d]
+
+        for mv in mvs:
+            no_rec_mv_mo.parse_model(mv, download_type=['mv'],
+                                     file_check=Config().get_file_check(),
+                                     shortcuts_stack=[] if Config().get_shortcut() else None)
+
+        log.print_info("spider complete!~")
+
+        pass
+
+    @expose(
+        help="login and spider playlists, usage: login-spls -lu <login user> [-lp <login password>] [-dw <mv,mp3>]")
     def login_spls(self):
         if self.param_check(['lu', 'lp'], sys._getframe().f_code.co_name) is False:
             return
 
         from NXSpider.bin.models import playlist_mo
 
+        plaintext_pwd = self.app.pargs.lp or None
+        if plaintext_pwd is None:
+            import getpass
+            plaintext_pwd = getpass.getpass("Please input your password:")
+
         session = requests.session()
         import hashlib
-        plaintext_pwd = self.app.pargs.lp
-        plaintext_pwd = plaintext_pwd.encode()
         password = hashlib.md5(plaintext_pwd).hexdigest()
         res = api.login(self.app.pargs.lu, password, session)
         if res.get('code', 0) != 200:
@@ -328,6 +345,7 @@ class SpiderController(NXSpiderBaseController):
                 ))
                 playlist_mo.parse_model(playlist_detail,
                                         download_type=download_type,
-                                        file_check=Config().get_file_check())
+                                        file_check=Config().get_file_check(),
+                                        shortcuts_stack=[] if Config().get_shortcut() else None)
         log.print_info("spider complete!~")
         pass

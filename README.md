@@ -67,7 +67,7 @@ NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫�
 ### 爬取命令
 	$ nxspider sab -ab <album_id,id1,id2> [-dw <mv,mp3>]
     $ nxspider sab -ab 3084625,3107072 -dw mv,mp3
-	# 根据专辑id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置)
+	# 根据专辑id(按逗号隔开)爬取歌曲，下载mp3,mv(参数配置),所有[]内为可选内容
 
     $ nxspider smp3s -mp3 <mp3_id,id2,id3> [-dw <mv,mp3>]
 	# 根据歌曲id(按逗号隔开)爬取歌曲
@@ -86,7 +86,7 @@ NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫�
 
 	$ nxspider scls-pls -cls <class type> [-dw <mv,mp3>] [-offset <offset>] [-limit <limit>]
 	$ nxspider scls-pls -cls 全部 -dw mv,mp3 -offset 0 -limit 20
-	# 根据歌单分配，爬取该分类下最火歌单
+	# 根据歌单分配，爬取该分类下最火歌单,并下载mp3和mv
 
 	$ nxspider stop-mvs [-offset <offset>] [-limit <limit>]
 	# 爬取最火mv
@@ -101,6 +101,10 @@ NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫�
 	$ nxspider config-spider -mvr <240 or 480 or 720 or 1080>
 	# 配置下载mv最高的分辨率，默认720
 
+    $ nxspider config-spider --shortcut <1 or 0>
+	# 配置是否创建快捷方式（目前只创建歌单，歌手，唱片的快捷方式文件目录），默认0
+	# 在windows下配置1的话需要右键"以管理员身份运行" start.bat
+
 	$ nxspider config-spider -tag <1 or 0>
 	# 配置是否为媒体文件增加媒体标签，默认1
 
@@ -113,11 +117,11 @@ NXSpider， NetEase X Spider，一个强大的（网易云音乐）mp3,mv爬虫�
 	$ nxspider sw-ar-ab -ar <artist_id> [-offset <offset>] [-limit <limit>]
 	# 通过歌手id打印该歌手的唱片信息
 
-	$ nxspider login-smv -lu <user name or phone number> -lp <password>
-	# 不建议使用，登录后爬取自己收藏的所有mv
+	$ nxspider login-smv -lu <user name or phone number> [-lp <password>]
+	# 建议不使用-lp(会显示密码)，登录后爬取自己收藏的所有mv
 
-	$ nxspider login-spls -lu <login user> -lp <login password> [-dw <mv,mp3>]
-	# 不建议使用，登录后爬取自己所有歌单（包括收藏），下载mp3和mv（记得别忘输入 -dw mp3,mv）
+	$ nxspider login-spls -lu <login user> [-lp <login password>] [-dw <mv,mp3>]
+	# 建议不使用-lp(会显示密码)，登录后爬取自己所有歌单（包括最爱），下载mp3和mv（记得别忘输入 -dw mp3,mv）
 
 	$ nxspider config_clear
 	# 恢复所有设置到默认，建议执行后进行配置下载目录
